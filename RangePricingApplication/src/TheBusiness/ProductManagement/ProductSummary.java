@@ -1,50 +1,65 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package TheBusiness.ProductManagement;
 
+import TheBusiness.OrderManagement.OrderItem;
+
 /**
- *
- * @author kal bugrara
+ * Summarizes product performance based directly on the product's orderitems list.
+ * This supports ManageProductPerformanceDetail.java for browsing product price performance.
+ * @author revised
  */
-//this class will extract summary data from the product
 public class ProductSummary {
 
-    Product subjectproduct;
-    int numberofsalesabovetarget;
-    int numberofsalesbelowtarget;
-    int productpriceperformance; //total profit above target --could be negative too
-    int acutalsalesvolume;
-    int rank; // will be done later
+    private Product product;
+    private double totalRevenue;
+    private int numberAboveTarget;
+    private int numberBelowTarget;
+    private double pricePerformance; // % difference around target
 
     public ProductSummary(Product p) {
-        
-        subjectproduct = p; //keeps track of the product itself not as well;
-        numberofsalesabovetarget = p.getNumberOfProductSalesAboveTarget();
-        productpriceperformance = p.getOrderPricePerformance();
-        acutalsalesvolume = p.getSalesVolume();
-        numberofsalesbelowtarget = p.getNumberOfProductSalesBelowTarget();
+        this.product = p;
+        analyzeProductPerformance();
     }
 
-    public int getSalesRevenues() {
-        return acutalsalesvolume;
+    private void analyzeProductPerformance() {
+        totalRevenue = 0;
+        numberAboveTarget = 0;
+        numberBelowTarget = 0;
+
+        for (OrderItem item : product.orderitems) {  // 直接從 product 拿
+            totalRevenue += item.getActualPrice() * item.getQuantity();
+
+            if (item.getActualPrice() > product.getTargetPrice()) {
+                numberAboveTarget++;
+            } else if (item.getActualPrice() < product.getTargetPrice()) {
+                numberBelowTarget++;
+            }
+        }
+
+        int total = numberAboveTarget + numberBelowTarget;
+        if (total == 0) {
+            pricePerformance = 0;
+        } else {
+            pricePerformance = ((double)(numberAboveTarget - numberBelowTarget) / total) * 100.0;
+        }
+    }
+
+    public double getSalesRevenues() {
+        return totalRevenue;
     }
 
     public int getNumberAboveTarget() {
-        return numberofsalesabovetarget;
-    }
-
-    public int getProductPricePerformance() {
-        return productpriceperformance;
+        return numberAboveTarget;
     }
 
     public int getNumberBelowTarget() {
-        return numberofsalesbelowtarget;
+        return numberBelowTarget;
+    }
+
+    public double getProductPricePerformance() {
+        return pricePerformance;
     }
 
     public boolean isProductAlwaysAboveTarget() {
-        return false; // to be implemented
+        return numberBelowTarget == 0 && numberAboveTarget > 0;
     }
 }
