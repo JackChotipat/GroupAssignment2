@@ -15,8 +15,10 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ 
+ * 
  * @author 123
+ * @date 2025-11-11
  */
 public class RunSimulationPanel extends JPanel {
     private Business business;
@@ -199,26 +201,30 @@ public class RunSimulationPanel extends JPanel {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         panel.setBackground(new Color(0, 153, 153));
         
-        // Back Button
+        // Back button
         backButton = new JButton("<< Back");
-        backButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        backButton.setFont(new Font("Arial", Font.BOLD, 14));
+        backButton.setPreferredSize(new Dimension(120, 40));
         backButton.addActionListener(e -> handleBack());
         
-        // Reset Button
+        // Reset button
         resetButton = new JButton("Reset");
-        resetButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        resetButton.setFont(new Font("Arial", Font.BOLD, 14));
+        resetButton.setPreferredSize(new Dimension(120, 40));
         resetButton.addActionListener(e -> handleReset());
         
-        // Run Simulation Button
+        // Run Simulation button
         runSimulationButton = new JButton("Run Simulation");
         runSimulationButton.setFont(new Font("Arial", Font.BOLD, 14));
+        runSimulationButton.setPreferredSize(new Dimension(160, 40));
         runSimulationButton.setBackground(new Color(0, 123, 255));
         runSimulationButton.setForeground(Color.WHITE);
         runSimulationButton.addActionListener(e -> handleRunSimulation());
         
-        // Apply Changes Button
+        // Apply Changes button
         applyChangesButton = new JButton("Apply Changes");
         applyChangesButton.setFont(new Font("Arial", Font.BOLD, 14));
+        applyChangesButton.setPreferredSize(new Dimension(160, 40));
         applyChangesButton.setBackground(new Color(40, 167, 69));
         applyChangesButton.setForeground(Color.WHITE);
         applyChangesButton.setEnabled(false);
@@ -232,26 +238,31 @@ public class RunSimulationPanel extends JPanel {
         return panel;
     }
     
+    /**
+     * Load product data into the table
+     */
     private void loadProductData() {
-        tableModel.setRowCount(0); // Clear existing data
+        tableModel.setRowCount(0);
         
         for (Supplier supplier : business.getSupplierDirectory().getSuplierList()) {
             for (Product product : supplier.getProductCatalog().getProductList()) {
                 Object[] row = new Object[5];
-                row[0] = product.toString(); // Product name
-                row[1] = "$" + product.getTargetPrice(); // Current target
-                row[2] = ""; // New target (empty for user input)
+                row[0] = product.toString();
+                row[1] = "$" + String.format("%,d", product.getTargetPrice());
+                row[2] = "";  // Empty for user input
                 row[3] = product.getNumberOfProductSalesAboveTarget();
                 row[4] = product.getNumberOfProductSalesBelowTarget();
-                
                 tableModel.addRow(row);
             }
         }
     }
     
+    /**
+     * Handle Run Simulation button click
+     * Collects price adjustments from table and runs simulation
+     */
     private void handleRunSimulation() {
         try {
-            // Clear previous adjustments
             adjustedPrices.clear();
             
             // Collect adjusted prices from table
@@ -266,7 +277,7 @@ public class RunSimulationPanel extends JPanel {
                     if (newTargetStr != null && !newTargetStr.trim().isEmpty()) {
                         try {
                             // Remove $ sign if present
-                            newTargetStr = newTargetStr.replace("$", "").trim();
+                            newTargetStr = newTargetStr.replace("$", "").replace(",", "").trim();
                             int newTarget = Integer.parseInt(newTargetStr);
                             
                             // Validate range
@@ -332,6 +343,9 @@ public class RunSimulationPanel extends JPanel {
         }
     }
     
+    /**
+     * Update the results panel with simulation results
+     */
     private void updateResultsDisplay() {
         // Revenue
         beforeRevenueLabel.setText("Before: $" + 
@@ -367,6 +381,12 @@ public class RunSimulationPanel extends JPanel {
         }
     }
     
+    /**
+     * Handle Apply Changes button click
+     * Permanently applies the simulated price changes
+     * 
+     * 🔧 FIXED: Now properly updates the display after applying changes
+     */
     private void handleApplyChanges() {
         int choice = JOptionPane.showConfirmDialog(this,
             "Apply these price changes permanently?\n" +
@@ -376,6 +396,11 @@ public class RunSimulationPanel extends JPanel {
             JOptionPane.WARNING_MESSAGE);
         
         if (choice == JOptionPane.YES_OPTION) {
+            // 🔧 FIX: Save the new state as the current state
+            // The prices have already been applied during simulation
+            // Now we just need to update the simulation's baseline
+            simulation.saveCurrentState();
+            
             JOptionPane.showMessageDialog(this,
                 "Price changes applied successfully!",
                 "Success",
@@ -389,14 +414,32 @@ public class RunSimulationPanel extends JPanel {
             // Update "Current Target" column with new values
             loadProductData();
             
+            beforeRevenueLabel.setText("Before: $" + 
+                String.format("%,d", simulation.getBeforeRevenue()));
+            afterRevenueLabel.setText("After: $" + 
+                String.format("%,d", simulation.getBeforeRevenue()));
+            revenueChangeLabel.setText("Change: $0");
+            revenueChangeLabel.setForeground(Color.BLACK);
+            
+            beforeProfitLabel.setText("Before: $" + 
+                String.format("%,d", simulation.getBeforeProfit()));
+            afterProfitLabel.setText("After: $" + 
+                String.format("%,d", simulation.getBeforeProfit()));
+            profitChangeLabel.setText("Change: $0");
+            profitChangeLabel.setForeground(Color.BLACK);
+            
+            recommendationLabel.setText("Click 'Run Simulation' to see results");
+            recommendationLabel.setForeground(Color.BLACK);
+            
             applyChangesButton.setEnabled(false);
             adjustedPrices.clear();
-            
-            // Reset results
-            resetResultsDisplay();
         }
     }
     
+    /**
+     * Handle Reset button click
+     * Reverts all changes to original prices
+     */
     private void handleReset() {
         simulation.restore();
         
@@ -404,6 +447,9 @@ public class RunSimulationPanel extends JPanel {
         for (int i = 0; i < tableModel.getRowCount(); i++) {
             tableModel.setValueAt("", i, 2);
         }
+        
+        // Reload product data to show original prices
+        loadProductData();
         
         applyChangesButton.setEnabled(false);
         adjustedPrices.clear();
@@ -415,6 +461,9 @@ public class RunSimulationPanel extends JPanel {
             JOptionPane.INFORMATION_MESSAGE);
     }
     
+    /**
+     * Reset the results display to initial state
+     */
     private void resetResultsDisplay() {
         beforeRevenueLabel.setText("Before: $0");
         afterRevenueLabel.setText("After: $0");
@@ -430,6 +479,10 @@ public class RunSimulationPanel extends JPanel {
         recommendationLabel.setForeground(Color.BLACK);
     }
     
+    /**
+     * Handle Back button click
+     * Returns to previous panel
+     */
     private void handleBack() {
         try {
             // Get parent container

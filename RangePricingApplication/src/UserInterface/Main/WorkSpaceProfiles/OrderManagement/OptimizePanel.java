@@ -7,6 +7,7 @@ package UserInterface.Main.WorkSpaceProfiles.OrderManagement;
 import TheBusiness.Business.Business;
 import TheBusiness.Business.ProfitOptimizer;
 import TheBusiness.ProductManagement.Product;
+import TheBusiness.Supplier.Supplier;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
@@ -289,8 +290,8 @@ public class OptimizePanel extends JPanel {
     
     private int calculateCurrentProfit() {
         int total = 0;
-        for (var supplier : business.getSupplierDirectory().getSuplierList()) {
-            for (var product : supplier.getProductCatalog().getProductList()) {
+        for (Supplier supplier : business.getSupplierDirectory().getSuplierList()) {
+            for (Product product : supplier.getProductCatalog().getProductList()) {
                 total += product.getOrderPricePerformance();
             }
         }
@@ -418,8 +419,8 @@ public class OptimizePanel extends JPanel {
         HashMap<Product, Integer> bestPrices = optimizer.getBestPrices();
         int changeCount = 0;
         
-        for (var supplier : business.getSupplierDirectory().getSuplierList()) {
-            for (var product : supplier.getProductCatalog().getProductList()) {
+        for (Supplier supplier : business.getSupplierDirectory().getSuplierList()) {
+            for (Product product : supplier.getProductCatalog().getProductList()) {
                 
                 if (bestPrices.containsKey(product)) {
                     int oldPrice = product.getTargetPrice();
