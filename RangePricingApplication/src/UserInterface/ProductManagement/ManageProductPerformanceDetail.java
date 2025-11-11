@@ -72,6 +72,8 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         productPricePerformanceTextField = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
+        lowerPriceBtn = new javax.swing.JButton();
+        increasePriceBtn = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(0, 153, 153));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -125,6 +127,22 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
 
         jLabel7.setText("Marign around target");
         add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 200, 110, -1));
+
+        lowerPriceBtn.setText("jButton1");
+        lowerPriceBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lowerPriceBtnActionPerformed(evt);
+            }
+        });
+        add(lowerPriceBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 220, -1, -1));
+
+        increasePriceBtn.setText("jButton2");
+        increasePriceBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                increasePriceBtnActionPerformed(evt);
+            }
+        });
+        add(increasePriceBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 220, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void BackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackActionPerformed
@@ -147,15 +165,67 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_productPricePerformanceTextFieldActionPerformed
 
+    private void lowerPriceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lowerPriceBtnActionPerformed
+        // TODO add your handling code here:
+        int oldTarget = selectedproduct.getTargetPrice();
+    int below = selectedproduct.getNumberOfProductSalesBelowTarget();
+    int above = selectedproduct.getNumberOfProductSalesAboveTarget();
+
+    if (below <= above) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Product sales are not below target — no need to lower price.");
+        return;
+    }
+
+    int newTarget = (int)(oldTarget * 0.9); // 降 10%
+    selectedproduct.updateProduct(
+        selectedproduct.getFloorPrice(),
+        selectedproduct.getCeilingPrice(),
+        newTarget
+    );
+
+    javax.swing.JOptionPane.showMessageDialog(this, 
+        "Target price lowered from $" + oldTarget + " → $" + newTarget);
+
+    refreshTable(); // 重新載入績效數據
+    }//GEN-LAST:event_lowerPriceBtnActionPerformed
+
+    private void increasePriceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_increasePriceBtnActionPerformed
+        // TODO add your handling code here:
+         int oldTarget = selectedproduct.getTargetPrice();
+    int below = selectedproduct.getNumberOfProductSalesBelowTarget();
+    int above = selectedproduct.getNumberOfProductSalesAboveTarget();
+
+    if (above <= below) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Product sales have not surpassed target — cannot increase price.");
+        return;
+    }
+
+    int newTarget = (int)(oldTarget * 1.1); // 漲 10%
+    selectedproduct.updateProduct(
+        selectedproduct.getFloorPrice(),
+        selectedproduct.getCeilingPrice(),
+        newTarget
+    );
+
+    javax.swing.JOptionPane.showMessageDialog(this, 
+        "Target price increased from $" + oldTarget + " → $" + newTarget);
+
+    refreshTable();
+    }//GEN-LAST:event_increasePriceBtnActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Back;
+    private javax.swing.JButton increasePriceBtn;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JButton lowerPriceBtn;
     private javax.swing.JTextField productFrequencyAboveTargetTextField;
     private javax.swing.JTextField productFrequencyBelowTargetTextField;
     private javax.swing.JTextField productNameTextField;
@@ -173,6 +243,18 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
         productFrequencyAboveTargetTextField.setText(String.valueOf(productsummary.getNumberAboveTarget()));
         productFrequencyBelowTargetTextField.setText(String.valueOf(productsummary.getNumberBelowTarget()));
         productPricePerformanceTextField.setText(String.format("%.2f%%", productsummary.getProductPricePerformance()));
+    }
+    
+    
+
+    private void refreshTable() {
+        ProductSummary productsummary = new ProductSummary(selectedproduct);
+
+        productNameTextField.setText(selectedproduct.toString());
+        productRevenueTextField.setText(String.valueOf(productsummary.getSalesRevenues()));
+        productFrequencyAboveTargetTextField.setText(String.valueOf(productsummary.getNumberAboveTarget()));
+        productFrequencyBelowTargetTextField.setText(String.valueOf(productsummary.getNumberBelowTarget()));
+        productPricePerformanceTextField.setText(String.valueOf(productsummary.getProductPricePerformance()));
     }
 
 }
