@@ -15,6 +15,8 @@ import TheBusiness.CustomerManagement.CustomerProfile;
 import TheBusiness.SalesManagement.SalesPersonProfile;
 import UserInterface.Main.WorkSpaceProfiles.OrderManagement.ManageSalesPersonOrders;
 import UserInterface.Main.WorkSpaceProfiles.OrderManagement.ProcessOrder;
+import UserInterface.ProductManagement.ManageProductPerformanceDetail;
+import java.awt.CardLayout;
 import javax.swing.JPanel;
 
 /**
@@ -223,12 +225,26 @@ public class SalesPersonWorkAreaJPanel extends javax.swing.JPanel {
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
         // TODO add your handling code here:
+if (business.getSupplierDirectory().getSuplierList().isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "No suppliers found! Please add suppliers first.");
+        return;
+    }
 
-        CardSequencePanel.removeAll();
-//        ManageIncidents aos = new  ManageIncidents(businessunit, CardSequencePanel);
-        // aos.setAgenda(businessunit.getRiskManagementAgenda());
-//        CardSequencePanel.add("RiskAgendaObjectives", aos);
-        ((java.awt.CardLayout) CardSequencePanel.getLayout()).next(CardSequencePanel);
+    TheBusiness.Supplier.Supplier supplier = business.getSupplierDirectory().getSuplierList().get(0);
+    if (supplier.getProductCatalog().getProductList().isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "No products found in supplier: " + supplier.getName());
+        return;
+    }
+
+    TheBusiness.ProductManagement.Product selectedProduct =
+            supplier.getProductCatalog().getProductList().get(0);
+
+    ManageProductPerformanceDetail panel =
+            new ManageProductPerformanceDetail(selectedProduct, CardSequencePanel);
+
+    // ✅ 不用 removeAll()
+    CardSequencePanel.add("ProductPerformanceDetail", panel);
+    ((CardLayout) CardSequencePanel.getLayout()).next(CardSequencePanel);
 }//GEN-LAST:event_jButton11ActionPerformed
 
 

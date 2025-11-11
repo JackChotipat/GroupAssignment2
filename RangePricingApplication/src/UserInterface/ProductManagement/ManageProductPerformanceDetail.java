@@ -11,6 +11,7 @@ import TheBusiness.ProductManagement.ProductSummary;
 import TheBusiness.Supplier.Supplier;
 import javax.swing.JPanel;
 
+
 /**
  *
  * @author kal bugrara
@@ -26,27 +27,29 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
 
     public ManageProductPerformanceDetail(Product product, JPanel jp) {
 
-        CardSequencePanel = jp;
+        //CardSequencePanel = jp;
+        this.CardSequencePanel = jp;
         this.selectedproduct = product;
         initComponents();
-        refreshTable();
+        //refreshTable();
+        displayProductPerformance();
 
     }
 
 
-    public void refreshTable() {
+    //public void refreshTable() {
 
        
-        ProductSummary productsummary = new ProductSummary(selectedproduct);
+        //ProductSummary productsummary = new ProductSummary(selectedproduct);
 
-        productNameTextField.setText(selectedproduct.toString());
-        String revenues = String.valueOf(productsummary.getSalesRevenues());
-        productRevenueTextField.setText(revenues);
-        productFrequencyAboveTargetTextField.setText( String.valueOf(productsummary.getNumberAboveTarget()));
-        productFrequencyBelowTargetTextField.setText( String.valueOf(productsummary.getNumberBelowTarget()));
-        productPricePerformanceTextField.setText(String.valueOf(productsummary.getProductPricePerformance()));
+       // productNameTextField.setText(selectedproduct.toString());
+       // String revenues = String.valueOf(productsummary.getSalesRevenues());
+        //productRevenueTextField.setText(revenues);
+       // productFrequencyAboveTargetTextField.setText( String.valueOf(productsummary.getNumberAboveTarget()));
+       // productFrequencyBelowTargetTextField.setText( String.valueOf(productsummary.getNumberBelowTarget()));
+       // productPricePerformanceTextField.setText(String.valueOf(productsummary.getProductPricePerformance()));
 
-    }
+    //}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -159,5 +162,17 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
     private javax.swing.JTextField productPricePerformanceTextField;
     private javax.swing.JTextField productRevenueTextField;
     // End of variables declaration//GEN-END:variables
+
+    private void displayProductPerformance() {
+        if (selectedproduct == null) return;
+
+        ProductSummary productsummary = new ProductSummary(selectedproduct);
+
+        productNameTextField.setText(selectedproduct.toString());
+        productRevenueTextField.setText(String.format("%.2f", productsummary.getSalesRevenues()));
+        productFrequencyAboveTargetTextField.setText(String.valueOf(productsummary.getNumberAboveTarget()));
+        productFrequencyBelowTargetTextField.setText(String.valueOf(productsummary.getNumberBelowTarget()));
+        productPricePerformanceTextField.setText(String.format("%.2f%%", productsummary.getProductPricePerformance()));
+    }
 
 }
