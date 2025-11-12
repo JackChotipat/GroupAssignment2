@@ -15,7 +15,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 /**
- 
+ * Task 4: Run Simulation Panel
+ * Modified to display Margin Rate (per TA feedback)
  * 
  * @author 123
  * @date 2025-11-11
@@ -40,6 +41,10 @@ public class RunSimulationPanel extends JPanel {
     private JLabel beforeProfitLabel;
     private JLabel afterProfitLabel;
     private JLabel profitChangeLabel;
+    // 🔧 NEW: Margin Rate labels
+    private JLabel beforeMarginRateLabel;
+    private JLabel afterMarginRateLabel;
+    private JLabel marginRateChangeLabel;
     private JLabel recommendationLabel;
     
     // Store adjusted prices
@@ -136,6 +141,7 @@ public class RunSimulationPanel extends JPanel {
         return panel;
     }
     
+    // 🔧 MODIFIED: Added Margin Rate section
     private JPanel createResultsPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -166,6 +172,16 @@ public class RunSimulationPanel extends JPanel {
         panel.add(beforeProfitLabel);
         panel.add(afterProfitLabel);
         panel.add(profitChangeLabel);
+        panel.add(Box.createVerticalStrut(20));
+        
+        // 🔧 NEW: Margin Rate Section (KEY METRIC)
+        panel.add(createSectionLabel("MARGIN RATE:"));
+        beforeMarginRateLabel = createResultLabel("Before: 0.00%");
+        afterMarginRateLabel = createResultLabel("After: 0.00%");
+        marginRateChangeLabel = createResultLabel("Change: 0.00%");
+        panel.add(beforeMarginRateLabel);
+        panel.add(afterMarginRateLabel);
+        panel.add(marginRateChangeLabel);
         panel.add(Box.createVerticalStrut(20));
         
         // Recommendation
@@ -207,85 +223,85 @@ public class RunSimulationPanel extends JPanel {
         backButton.setPreferredSize(new Dimension(120, 40));
         backButton.addActionListener(e -> handleBack());
         
-        // Reset button
-        resetButton = new JButton("Reset");
-        resetButton.setFont(new Font("Arial", Font.BOLD, 14));
-        resetButton.setPreferredSize(new Dimension(120, 40));
-        resetButton.addActionListener(e -> handleReset());
-        
         // Run Simulation button
         runSimulationButton = new JButton("Run Simulation");
         runSimulationButton.setFont(new Font("Arial", Font.BOLD, 14));
-        runSimulationButton.setPreferredSize(new Dimension(160, 40));
         runSimulationButton.setBackground(new Color(0, 123, 255));
         runSimulationButton.setForeground(Color.WHITE);
-        runSimulationButton.addActionListener(e -> handleRunSimulation());
+        runSimulationButton.setPreferredSize(new Dimension(150, 40));
+        runSimulationButton.setFocusPainted(false);
+        runSimulationButton.addActionListener(e -> runSimulation());
         
         // Apply Changes button
         applyChangesButton = new JButton("Apply Changes");
         applyChangesButton.setFont(new Font("Arial", Font.BOLD, 14));
-        applyChangesButton.setPreferredSize(new Dimension(160, 40));
         applyChangesButton.setBackground(new Color(40, 167, 69));
         applyChangesButton.setForeground(Color.WHITE);
+        applyChangesButton.setPreferredSize(new Dimension(150, 40));
+        applyChangesButton.setFocusPainted(false);
         applyChangesButton.setEnabled(false);
         applyChangesButton.addActionListener(e -> handleApplyChanges());
         
+        // Reset button
+        resetButton = new JButton("Reset");
+        resetButton.setFont(new Font("Arial", Font.BOLD, 14));
+        resetButton.setBackground(new Color(108, 117, 125));
+        resetButton.setForeground(Color.WHITE);
+        resetButton.setPreferredSize(new Dimension(120, 40));
+        resetButton.setFocusPainted(false);
+        resetButton.addActionListener(e -> handleReset());
+        
         panel.add(backButton);
-        panel.add(resetButton);
         panel.add(runSimulationButton);
         panel.add(applyChangesButton);
+        panel.add(resetButton);
         
         return panel;
     }
     
     /**
-     * Load product data into the table
+     * Load all products into the table
      */
     private void loadProductData() {
         tableModel.setRowCount(0);
         
         for (Supplier supplier : business.getSupplierDirectory().getSuplierList()) {
             for (Product product : supplier.getProductCatalog().getProductList()) {
-                Object[] row = new Object[5];
-                row[0] = product.toString();
-                row[1] = "$" + String.format("%,d", product.getTargetPrice());
-                row[2] = "";  // Empty for user input
-                row[3] = product.getNumberOfProductSalesAboveTarget();
-                row[4] = product.getNumberOfProductSalesBelowTarget();
+                Object[] row = {
+                    product.toString(),
+                    product.getTargetPrice(),
+                    "", // New Target (empty initially)
+                    product.getNumberOfProductSalesAboveTarget(),
+                    product.getNumberOfProductSalesBelowTarget()
+                };
                 tableModel.addRow(row);
             }
         }
     }
     
     /**
-     * Handle Run Simulation button click
-     * Collects price adjustments from table and runs simulation
+     * Run simulation with new prices
      */
-    private void handleRunSimulation() {
+    private void runSimulation() {
         try {
             adjustedPrices.clear();
-            
-            // Collect adjusted prices from table
-            int rowCount = tableModel.getRowCount();
             int adjustmentCount = 0;
-            
             int currentRow = 0;
+            
+            // Collect all adjustments
             for (Supplier supplier : business.getSupplierDirectory().getSuplierList()) {
                 for (Product product : supplier.getProductCatalog().getProductList()) {
-                    String newTargetStr = (String) tableModel.getValueAt(currentRow, 2);
+                    Object newTargetObj = tableModel.getValueAt(currentRow, 2);
                     
-                    if (newTargetStr != null && !newTargetStr.trim().isEmpty()) {
+                    if (newTargetObj != null && !newTargetObj.toString().trim().isEmpty()) {
                         try {
-                            // Remove $ sign if present
-                            newTargetStr = newTargetStr.replace("$", "").replace(",", "").trim();
-                            int newTarget = Integer.parseInt(newTargetStr);
+                            int newTarget = Integer.parseInt(newTargetObj.toString().trim());
                             
-                            // Validate range
+                            // Validate against floor and ceiling
                             if (newTarget < product.getFloorPrice() || newTarget > product.getCeilingPrice()) {
                                 JOptionPane.showMessageDialog(this,
-                                    "Invalid price for " + product + "\n" +
-                                    "Must be between $" + product.getFloorPrice() + 
-                                    " and $" + product.getCeilingPrice(),
+                                    product.toString() + " price must be between " +
+                                    product.getFloorPrice() + " and " + product.getCeilingPrice(),
                                     "Invalid Price",
                                     JOptionPane.ERROR_MESSAGE);
                                 return;
@@ -293,9 +309,9 @@ public class RunSimulationPanel extends JPanel {
                             
                             adjustedPrices.put(product, newTarget);
                             adjustmentCount++;
-                        } catch (NumberFormatException ex) {
+                        } catch (NumberFormatException e) {
                             JOptionPane.showMessageDialog(this,
-                                "Invalid number format in row " + (currentRow + 1),
+                                "Invalid number format for " + product.toString(),
                                 "Input Error",
                                 JOptionPane.ERROR_MESSAGE);
                             return;
@@ -344,7 +360,8 @@ public class RunSimulationPanel extends JPanel {
     }
     
     /**
-     * Update the results panel with simulation results
+     * 🔧 MODIFIED: Update the results panel with simulation results
+     * Now includes Margin Rate display and recommendation based on margin rate
      */
     private void updateResultsDisplay() {
         // Revenue
@@ -369,23 +386,32 @@ public class RunSimulationPanel extends JPanel {
             (profitChange >= 0 ? "+" : "") + "$" + String.format("%,d", profitChange));
         profitChangeLabel.setForeground(profitChange >= 0 ? new Color(40, 167, 69) : Color.RED);
         
-        // Recommendation
-        if (profitChange > 0) {
-            recommendationLabel.setText("<html><font color='green'>✓ APPLY NEW PRICES<br>Profit increased by $" + 
-                String.format("%,d", profitChange) + "</font></html>");
-        } else if (profitChange < 0) {
-            recommendationLabel.setText("<html><font color='red'>✗ KEEP ORIGINAL PRICES<br>Profit decreased by $" + 
-                String.format("%,d", Math.abs(profitChange)) + "</font></html>");
+        // 🔧 NEW: Margin Rate
+        beforeMarginRateLabel.setText("Before: " + 
+            String.format("%.2f%%", simulation.getBeforeMarginRate()));
+        afterMarginRateLabel.setText("After: " + 
+            String.format("%.2f%%", simulation.getAfterMarginRate()));
+        
+        double marginRateChange = simulation.getMarginRateChange();
+        marginRateChangeLabel.setText("Change: " + 
+            (marginRateChange >= 0 ? "+" : "") + String.format("%.2f%%", marginRateChange));
+        marginRateChangeLabel.setForeground(marginRateChange >= 0 ? new Color(40, 167, 69) : Color.RED);
+        
+        // 🔧 MODIFIED: Recommendation based on MARGIN RATE (per TA feedback)
+        if (marginRateChange > 0) {
+            recommendationLabel.setText("<html><font color='green'>✓ APPLY NEW PRICES<br>Margin rate increased by " + 
+                String.format("%.2f%%", marginRateChange) + "</font></html>");
+        } else if (marginRateChange < 0) {
+            recommendationLabel.setText("<html><font color='red'>✗ KEEP ORIGINAL PRICES<br>Margin rate decreased by " + 
+                String.format("%.2f%%", Math.abs(marginRateChange)) + "</font></html>");
         } else {
-            recommendationLabel.setText("<html>→ NO CHANGE<br>Profit remains the same</html>");
+            recommendationLabel.setText("<html>→ NO CHANGE<br>Margin rate remains the same</html>");
         }
     }
     
     /**
      * Handle Apply Changes button click
      * Permanently applies the simulated price changes
-     * 
-     * 🔧 FIXED: Now properly updates the display after applying changes
      */
     private void handleApplyChanges() {
         int choice = JOptionPane.showConfirmDialog(this,
@@ -396,9 +422,7 @@ public class RunSimulationPanel extends JPanel {
             JOptionPane.WARNING_MESSAGE);
         
         if (choice == JOptionPane.YES_OPTION) {
-            // 🔧 FIX: Save the new state as the current state
-            // The prices have already been applied during simulation
-            // Now we just need to update the simulation's baseline
+            // Save the new state as the current state
             simulation.saveCurrentState();
             
             JOptionPane.showMessageDialog(this,
@@ -414,6 +438,7 @@ public class RunSimulationPanel extends JPanel {
             // Update "Current Target" column with new values
             loadProductData();
             
+            // 🔧 MODIFIED: Reset display including margin rate
             beforeRevenueLabel.setText("Before: $" + 
                 String.format("%,d", simulation.getBeforeRevenue()));
             afterRevenueLabel.setText("After: $" + 
@@ -427,6 +452,13 @@ public class RunSimulationPanel extends JPanel {
                 String.format("%,d", simulation.getBeforeProfit()));
             profitChangeLabel.setText("Change: $0");
             profitChangeLabel.setForeground(Color.BLACK);
+            
+            beforeMarginRateLabel.setText("Before: " + 
+                String.format("%.2f%%", simulation.getBeforeMarginRate()));
+            afterMarginRateLabel.setText("After: " + 
+                String.format("%.2f%%", simulation.getBeforeMarginRate()));
+            marginRateChangeLabel.setText("Change: 0.00%");
+            marginRateChangeLabel.setForeground(Color.BLACK);
             
             recommendationLabel.setText("Click 'Run Simulation' to see results");
             recommendationLabel.setForeground(Color.BLACK);
@@ -462,7 +494,8 @@ public class RunSimulationPanel extends JPanel {
     }
     
     /**
-     * Reset the results display to initial state
+     * 🔧 MODIFIED: Reset the results display to initial state
+     * Now includes margin rate reset
      */
     private void resetResultsDisplay() {
         beforeRevenueLabel.setText("Before: $0");
@@ -474,6 +507,12 @@ public class RunSimulationPanel extends JPanel {
         afterProfitLabel.setText("After: $0");
         profitChangeLabel.setText("Change: $0");
         profitChangeLabel.setForeground(Color.BLACK);
+        
+        // 🔧 NEW: Reset margin rate labels
+        beforeMarginRateLabel.setText("Before: 0.00%");
+        afterMarginRateLabel.setText("After: 0.00%");
+        marginRateChangeLabel.setText("Change: 0.00%");
+        marginRateChangeLabel.setForeground(Color.BLACK);
         
         recommendationLabel.setText("Click 'Run Simulation' to see results");
         recommendationLabel.setForeground(Color.BLACK);

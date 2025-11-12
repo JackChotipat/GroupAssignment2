@@ -8,14 +8,20 @@ import TheBusiness.ProductManagement.Product;
 import TheBusiness.Supplier.Supplier;
 import java.util.HashMap;
 import java.util.ArrayList;
+
 /**
- *
+ * Task 5: Profit Margin Rate Optimizer
+ * Modified to optimize MARGIN RATE instead of absolute profit (per TA feedback)
+ * 
  * @author 123
  */
 public class ProfitOptimizer {
     private Business business;
     private Simulation simulation;
-    private int bestProfit;
+    
+    // 🔧 CHANGED: Optimize margin rate (%) instead of profit ($)
+    private double bestMarginRate;
+    private double initialMarginRate;  // 🔧 NEW
     private HashMap<Product, Integer> bestPrices;
     
     // Optimization parameters
@@ -38,22 +44,23 @@ public class ProfitOptimizer {
     
     /**
      * Main optimization method
-     * Runs iterative optimization until no further improvement
+     * Runs iterative optimization to maximize margin rate
      */
     public void optimize() {
         System.out.println("\n" + "=".repeat(60));
-        System.out.println("       TASK 5: PROFIT OPTIMIZATION STARTING");
+        System.out.println("       TASK 5: MARGIN RATE OPTIMIZATION");  // 🔧 CHANGED
+        System.out.println("       Target: Maximize Profit Margin Rate");  // 🔧 NEW
         System.out.println("=".repeat(60));
         
         // Save initial state
         simulation.saveCurrentState();
-        bestProfit = simulation.getBeforeProfit();
+        bestMarginRate = simulation.getBeforeMarginRate();  // 🔧 CHANGED
+        initialMarginRate = bestMarginRate;  // 🔧 NEW
         saveBestPrices();
         
-        int initialProfit = bestProfit;
-        log("Initial profit: $" + initialProfit);
+        log("Initial margin rate: " + String.format("%.2f%%", initialMarginRate));  // 🔧 CHANGED
         log("Starting optimization with max " + maxIterations + " iterations");
-        System.out.println("\nInitial Profit: $" + String.format("%,d", initialProfit));
+        System.out.println("\nInitial Margin Rate: " + String.format("%.2f%%", initialMarginRate));  // 🔧 CHANGED
         System.out.println("Starting optimization...\n");
         
         // Main optimization loop
@@ -78,18 +85,19 @@ public class ProfitOptimizer {
             }
             simulation.calculateNewResults();
             
-            int newProfit = simulation.getAfterProfit();
-            int improvement = newProfit - bestProfit;
+            double newMarginRate = simulation.getAfterMarginRate();  // 🔧 CHANGED
+            double improvement = newMarginRate - bestMarginRate;  // 🔧 CHANGED
             
             System.out.println("Adjusted " + suggestions.size() + " product(s)");
-            System.out.println("New Profit: $" + String.format("%,d", newProfit));
+            System.out.println("New Margin Rate: " + String.format("%.2f%%", newMarginRate));  // 🔧 CHANGED
             
-            if (newProfit > bestProfit) {
+            if (newMarginRate > bestMarginRate) {  // 🔧 CHANGED
                 // Improvement found!
-                System.out.println("✓ Improvement: +$" + String.format("%,d", improvement));
-                log("Iteration " + iterationCount + ": Profit improved by $" + improvement);
+                System.out.println("✓ Improvement: +" + String.format("%.2f%%", improvement));  // 🔧 CHANGED
+                log("Iteration " + iterationCount + ": Margin rate improved by " + 
+                    String.format("%.2f%%", improvement));  // 🔧 CHANGED
                 
-                bestProfit = newProfit;
+                bestMarginRate = newMarginRate;  // 🔧 CHANGED
                 saveBestPrices();
                 noImprovementCount = 0;
                 totalAdjustments += suggestions.size();
@@ -112,7 +120,7 @@ public class ProfitOptimizer {
         applyBestPrices();
         
         // Print results
-        printOptimizationResults(initialProfit);
+        printOptimizationResults();  // 🔧 CHANGED: removed parameter
     }
     
     /**
@@ -199,12 +207,16 @@ public class ProfitOptimizer {
     }
     
     /**
-     * Print final optimization results
+     * 🔧 MODIFIED: Print final optimization results (now shows margin rate)
      */
-    private void printOptimizationResults(int initialProfit) {
-        int finalProfit = bestProfit;
-        int totalImprovement = finalProfit - initialProfit;
-        double improvementPercent = ((double) totalImprovement / initialProfit) * 100;
+    private void printOptimizationResults() {
+        double finalMarginRate = bestMarginRate;  // 🔧 CHANGED
+        double totalImprovement = finalMarginRate - initialMarginRate;  // 🔧 CHANGED
+        double improvementPercent = 0.0;
+        
+        if (initialMarginRate != 0) {
+            improvementPercent = (totalImprovement / initialMarginRate) * 100;  // 🔧 CHANGED
+        }
         
         System.out.println("\n" + "=".repeat(60));
         System.out.println("       OPTIMIZATION COMPLETE!");
@@ -215,17 +227,17 @@ public class ProfitOptimizer {
         System.out.println("  Total Price Adjustments: " + totalAdjustments);
         System.out.println();
         
-        System.out.println("PROFIT:");
-        System.out.println("  Initial:  $" + String.format("%,d", initialProfit));
-        System.out.println("  Final:    $" + String.format("%,d", finalProfit));
+        System.out.println("MARGIN RATE:");  // 🔧 CHANGED from PROFIT
+        System.out.println("  Initial:  " + String.format("%.2f%%", initialMarginRate));  // 🔧 CHANGED
+        System.out.println("  Final:    " + String.format("%.2f%%", finalMarginRate));  // 🔧 CHANGED
         System.out.println("  Change:   " + (totalImprovement >= 0 ? "+" : "") + 
-                          "$" + String.format("%,d", totalImprovement));
+                          String.format("%.2f%%", totalImprovement));  // 🔧 CHANGED
         System.out.println("  Improvement: " + String.format("%.2f%%", improvementPercent));
         System.out.println();
         
         if (totalImprovement > 0) {
-            System.out.println("✓ SUCCESS: Profit optimized by $" + 
-                             String.format("%,d", totalImprovement));
+            System.out.println("✓ SUCCESS: Margin rate optimized by " + 
+                             String.format("%.2f%%", totalImprovement));  // 🔧 CHANGED
         } else if (totalImprovement == 0) {
             System.out.println("→ Current prices are already optimal");
         } else {
@@ -234,7 +246,8 @@ public class ProfitOptimizer {
         
         System.out.println("\n" + "=".repeat(60));
         
-        log("Optimization complete. Final profit: $" + finalProfit);
+        log("Optimization complete. Final margin rate: " + 
+            String.format("%.2f%%", finalMarginRate));  // 🔧 CHANGED
     }
     
     /**
@@ -293,8 +306,9 @@ public class ProfitOptimizer {
         return new ArrayList<>(optimizationLog);
     }
     
-    // Getters
-    public int getBestProfit() { return bestProfit; }
+    // 🔧 MODIFIED: Getters now return margin rate instead of profit
+    public double getBestMarginRate() { return bestMarginRate; }  // 🔧 CHANGED
+    public double getInitialMarginRate() { return initialMarginRate; }  // 🔧 NEW
     public int getIterationCount() { return iterationCount; }
     public int getTotalAdjustments() { return totalAdjustments; }
     public HashMap<Product, Integer> getBestPrices() { return new HashMap<>(bestPrices); }

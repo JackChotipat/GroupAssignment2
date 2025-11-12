@@ -13,8 +13,11 @@ import java.awt.event.*;
 import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
 /**
- *
+ * Task 5: Optimize Panel
+ * Modified to display Margin Rate optimization (per TA feedback)
+ * 
  * @author 123
  */
 public class OptimizePanel extends JPanel {
@@ -31,9 +34,9 @@ public class OptimizePanel extends JPanel {
     private JTextArea logArea;
     private JScrollPane logScrollPane;
     
-    // Results display
-    private JLabel initialProfitLabel;
-    private JLabel finalProfitLabel;
+    // 🔧 MODIFIED: Results display (now for Margin Rate)
+    private JLabel initialProfitLabel;  // Will show margin rate
+    private JLabel finalProfitLabel;    // Will show margin rate
     private JLabel improvementLabel;
     private JLabel improvementPercentLabel;
     private JLabel iterationsLabel;
@@ -47,7 +50,7 @@ public class OptimizePanel extends JPanel {
     private DefaultTableModel tableModel;
     
     private boolean isOptimizing = false;
-    private int initialProfit;
+    private double initialMarginRate;  // 🔧 CHANGED from int initialProfit
     
     public OptimizePanel(Business b, JPanel cardPanel) {
         super();
@@ -82,7 +85,8 @@ public class OptimizePanel extends JPanel {
         JPanel panel = new JPanel();
         panel.setBackground(new Color(0, 153, 153));
         
-        JLabel titleLabel = new JLabel("Task 5: Maximize Profit Margins");
+        // 🔧 MODIFIED: Updated title to reflect margin rate optimization
+        JLabel titleLabel = new JLabel("Task 5: Maximize Profit Margin Rate");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
         titleLabel.setForeground(Color.WHITE);
         panel.add(titleLabel);
@@ -161,6 +165,7 @@ public class OptimizePanel extends JPanel {
         return panel;
     }
     
+    // 🔧 MODIFIED: Labels now reference Margin Rate
     private JPanel createStatsPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(6, 2, 10, 10));
@@ -178,22 +183,22 @@ public class OptimizePanel extends JPanel {
         adjustmentsLabel = createValueLabel("0");
         panel.add(adjustmentsLabel);
         
-        // Initial Profit
-        panel.add(createLabel("Initial Profit:"));
-        initialProfitLabel = createValueLabel("$0");
+        // 🔧 MODIFIED: Initial Margin Rate (was Initial Profit)
+        panel.add(createLabel("Initial Margin Rate:"));
+        initialProfitLabel = createValueLabel("0.00%");
         panel.add(initialProfitLabel);
         
-        // Final Profit
-        panel.add(createLabel("Final Profit:"));
-        finalProfitLabel = createValueLabel("$0");
+        // 🔧 MODIFIED: Final Margin Rate (was Final Profit)
+        panel.add(createLabel("Final Margin Rate:"));
+        finalProfitLabel = createValueLabel("0.00%");
         panel.add(finalProfitLabel);
         
-        // Improvement
+        // 🔧 MODIFIED: Improvement (in percentage points)
         panel.add(createLabel("Improvement:"));
-        improvementLabel = createValueLabel("$0");
+        improvementLabel = createValueLabel("0.00%");
         panel.add(improvementLabel);
         
-        // Improvement %
+        // Improvement % (relative improvement)
         panel.add(createLabel("Improvement %:"));
         improvementPercentLabel = createValueLabel("0.00%");
         panel.add(improvementPercentLabel);
@@ -208,7 +213,7 @@ public class OptimizePanel extends JPanel {
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 300));
         
         // Table
-        String[] columns = {"Product", "Old Target", "New Target", "Change"};
+        String[] columns = {"Product", "Old Price", "New Price", "Change"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -231,13 +236,14 @@ public class OptimizePanel extends JPanel {
     
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Arial", Font.PLAIN, 14));
+        label.setFont(new Font("Arial", Font.BOLD, 14));
         return label;
     }
     
     private JLabel createValueLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Arial", Font.BOLD, 14));
+        label.setFont(new Font("Arial", Font.PLAIN, 14));
+        label.setHorizontalAlignment(SwingConstants.RIGHT);
         return label;
     }
     
@@ -245,70 +251,77 @@ public class OptimizePanel extends JPanel {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         panel.setBackground(new Color(0, 153, 153));
         
-        // Back Button
+        // Back button
         backButton = new JButton("<< Back");
-        backButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        backButton.setFont(new Font("Arial", Font.BOLD, 14));
+        backButton.setPreferredSize(new Dimension(120, 40));
         backButton.addActionListener(e -> handleBack());
         
-        // Reset Button
-        resetButton = new JButton("Reset");
-        resetButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        resetButton.addActionListener(e -> handleReset());
-        
-        // Optimize Button
+        // Optimize button
         optimizeButton = new JButton("Start Optimization");
         optimizeButton.setFont(new Font("Arial", Font.BOLD, 14));
-        optimizeButton.setBackground(new Color(40, 167, 69));
+        optimizeButton.setBackground(new Color(0, 123, 255));
         optimizeButton.setForeground(Color.WHITE);
-        optimizeButton.addActionListener(e -> handleOptimize());
+        optimizeButton.setPreferredSize(new Dimension(180, 40));
+        optimizeButton.setFocusPainted(false);
+        optimizeButton.addActionListener(e -> startOptimization());
         
-        // View Details Button
+        // View Details button
         viewDetailsButton = new JButton("View Details");
-        viewDetailsButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        viewDetailsButton.setFont(new Font("Arial", Font.BOLD, 14));
+        viewDetailsButton.setBackground(new Color(40, 167, 69));
+        viewDetailsButton.setForeground(Color.WHITE);
+        viewDetailsButton.setPreferredSize(new Dimension(150, 40));
+        viewDetailsButton.setFocusPainted(false);
         viewDetailsButton.setEnabled(false);
         viewDetailsButton.addActionListener(e -> handleViewDetails());
         
+        // Reset button
+        resetButton = new JButton("Reset");
+        resetButton.setFont(new Font("Arial", Font.BOLD, 14));
+        resetButton.setBackground(new Color(108, 117, 125));
+        resetButton.setForeground(Color.WHITE);
+        resetButton.setPreferredSize(new Dimension(120, 40));
+        resetButton.setFocusPainted(false);
+        resetButton.addActionListener(e -> handleReset());
+        
         panel.add(backButton);
-        panel.add(resetButton);
         panel.add(optimizeButton);
         panel.add(viewDetailsButton);
+        panel.add(resetButton);
         
         return panel;
     }
     
+    // 🔧 MODIFIED: Display initial margin rate
     private void displayInitialState() {
-        // Calculate initial profit
-        initialProfit = calculateCurrentProfit();
+        // Calculate initial margin rate
+        TheBusiness.Business.Simulation tempSim = new TheBusiness.Business.Simulation(business);
+        tempSim.saveCurrentState();
+        initialMarginRate = tempSim.getBeforeMarginRate();
         
-        initialProfitLabel.setText("$" + String.format("%,d", initialProfit));
+        initialProfitLabel.setText(String.format("%.2f%%", initialMarginRate));
         
-        logArea.append("System Ready\n");
-        logArea.append("Current Profit: $" + String.format("%,d", initialProfit) + "\n");
-        logArea.append("Click 'Start Optimization' to begin\n");
-        logArea.append("=".repeat(50) + "\n\n");
+        logArea.append("Current Business State:\n");
+        logArea.append("=".repeat(60) + "\n");
+        logArea.append("  Initial Margin Rate: " + String.format("%.2f%%", initialMarginRate) + "\n");
+        logArea.append("  Ready to optimize...\n\n");
     }
     
-    private int calculateCurrentProfit() {
-        int total = 0;
-        for (Supplier supplier : business.getSupplierDirectory().getSuplierList()) {
-            for (Product product : supplier.getProductCatalog().getProductList()) {
-                total += product.getOrderPricePerformance();
-            }
-        }
-        return total;
-    }
-    
-    private void handleOptimize() {
+    private void startOptimization() {
         if (isOptimizing) return;
         
         isOptimizing = true;
         optimizeButton.setEnabled(false);
         backButton.setEnabled(false);
-        statusLabel.setText("Optimizing...");
+        viewDetailsButton.setEnabled(false);
         
+        statusLabel.setText("Optimizing...");
+        progressBar.setValue(0);
         logArea.setText("");
+        
         logArea.append("=".repeat(60) + "\n");
-        logArea.append("   STARTING OPTIMIZATION\n");
+        logArea.append("   STARTING MARGIN RATE OPTIMIZATION\n");  // 🔧 MODIFIED
         logArea.append("=".repeat(60) + "\n\n");
         
         // Run optimization in background thread
@@ -355,9 +368,6 @@ public class OptimizePanel extends JPanel {
     private void runOptimizationWithUpdates() {
         optimizer = new ProfitOptimizer(business);
         
-        // We need to manually run the optimization to get progress updates
-        // This is a simplified version for UI demonstration
-        
         try {
             Thread.sleep(500); // Initial delay
             logArea.append("Analyzing current prices...\n");
@@ -368,7 +378,7 @@ public class OptimizePanel extends JPanel {
             progressBar.setValue(20);
             
             Thread.sleep(500);
-            logArea.append("Running optimization algorithm...\n\n");
+            logArea.append("Running margin rate optimization algorithm...\n\n");  // 🔧 MODIFIED
             progressBar.setValue(30);
             
             // Run actual optimization
@@ -384,14 +394,18 @@ public class OptimizePanel extends JPanel {
         }
     }
     
+    // 🔧 MODIFIED: Display margin rate results
     private void displayResults() {
-        int finalProfit = optimizer.getBestProfit();
-        int improvement = finalProfit - initialProfit;
-        double improvementPercent = ((double) improvement / initialProfit) * 100;
+        double finalMarginRate = optimizer.getBestMarginRate();  // 🔧 CHANGED
+        double improvement = finalMarginRate - initialMarginRate;  // 🔧 CHANGED
+        double improvementPercent = 0.0;
+        if (initialMarginRate != 0) {
+            improvementPercent = (improvement / initialMarginRate) * 100;  // 🔧 CHANGED
+        }
         
-        // Update labels
-        finalProfitLabel.setText("$" + String.format("%,d", finalProfit));
-        improvementLabel.setText((improvement >= 0 ? "+" : "") + "$" + String.format("%,d", improvement));
+        // 🔧 MODIFIED: Update labels with margin rate
+        finalProfitLabel.setText(String.format("%.2f%%", finalMarginRate));
+        improvementLabel.setText((improvement >= 0 ? "+" : "") + String.format("%.2f%%", improvement));
         improvementLabel.setForeground(improvement >= 0 ? new Color(40, 167, 69) : Color.RED);
         improvementPercentLabel.setText(String.format("%.2f%%", improvementPercent));
         improvementPercentLabel.setForeground(improvement >= 0 ? new Color(40, 167, 69) : Color.RED);
@@ -402,15 +416,15 @@ public class OptimizePanel extends JPanel {
         // Update table with price changes
         updatePriceChangesTable();
         
-        // Update log with summary
+        // 🔧 MODIFIED: Update log with margin rate summary
         logArea.append("\n\nRESULTS SUMMARY:\n");
         logArea.append("  Iterations: " + optimizer.getIterationCount() + "\n");
         logArea.append("  Adjustments: " + optimizer.getTotalAdjustments() + "\n");
-        logArea.append("  Initial Profit: $" + String.format("%,d", initialProfit) + "\n");
-        logArea.append("  Final Profit: $" + String.format("%,d", finalProfit) + "\n");
+        logArea.append("  Initial Margin Rate: " + String.format("%.2f%%", initialMarginRate) + "\n");
+        logArea.append("  Final Margin Rate: " + String.format("%.2f%%", finalMarginRate) + "\n");
         logArea.append("  Improvement: " + (improvement >= 0 ? "+" : "") + 
-                      "$" + String.format("%,d", improvement) + 
-                      " (" + String.format("%.2f%%", improvementPercent) + ")\n");
+                      String.format("%.2f%%", improvement) + 
+                      " (" + String.format("%.2f%%", improvementPercent) + " relative improvement)\n");
     }
     
     private void updatePriceChangesTable() {
@@ -480,13 +494,13 @@ public class OptimizePanel extends JPanel {
             JOptionPane.WARNING_MESSAGE);
         
         if (choice == JOptionPane.YES_OPTION) {
-            // Reset would require keeping original prices - for now just reload
+            // Reset display
             logArea.setText("");
             tableModel.setRowCount(0);
             
-            initialProfitLabel.setText("$0");
-            finalProfitLabel.setText("$0");
-            improvementLabel.setText("$0");
+            initialProfitLabel.setText("0.00%");
+            finalProfitLabel.setText("0.00%");
+            improvementLabel.setText("0.00%");
             improvementPercentLabel.setText("0.00%");
             iterationsLabel.setText("0");
             adjustmentsLabel.setText("0");
