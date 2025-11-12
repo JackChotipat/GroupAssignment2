@@ -15,6 +15,10 @@ import UserInterface.ManageTheBusiness.ManageTheBusinessJPanel;
 import UserInterface.ProductManagement.ManageSuppliersJPanel;
 import javax.swing.JPanel;
 
+import UserInterface.Main.WorkSpaceProfiles.OrderManagement.RunSimulationPanel;
+import UserInterface.Main.WorkSpaceProfiles.OrderManagement.OptimizePanel;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author kal
@@ -47,7 +51,7 @@ public class MarketingManagerWorkAreaJPanel1 extends javax.swing.JPanel {
 
         jButton4 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        btnManagePrices = new javax.swing.JButton();
         jButton11 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
@@ -81,17 +85,17 @@ public class MarketingManagerWorkAreaJPanel1 extends javax.swing.JPanel {
             }
         });
 
-        jButton6.setBackground(new java.awt.Color(102, 153, 255));
-        jButton6.setFont(getFont());
-        jButton6.setForeground(new java.awt.Color(255, 255, 255));
-        jButton6.setText("Manage Prices");
-        jButton6.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButton6.setMaximumSize(new java.awt.Dimension(145, 40));
-        jButton6.setMinimumSize(new java.awt.Dimension(20, 20));
-        jButton6.setPreferredSize(new java.awt.Dimension(240, 25));
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        btnManagePrices.setBackground(new java.awt.Color(102, 153, 255));
+        btnManagePrices.setFont(getFont());
+        btnManagePrices.setForeground(new java.awt.Color(255, 255, 255));
+        btnManagePrices.setText("Manage Prices");
+        btnManagePrices.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnManagePrices.setMaximumSize(new java.awt.Dimension(145, 40));
+        btnManagePrices.setMinimumSize(new java.awt.Dimension(20, 20));
+        btnManagePrices.setPreferredSize(new java.awt.Dimension(240, 25));
+        btnManagePrices.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6IdentifyEventsActionPerformed(evt);
+                btnManagePricesIdentifyEventsActionPerformed(evt);
             }
         });
 
@@ -125,7 +129,7 @@ public class MarketingManagerWorkAreaJPanel1 extends javax.swing.JPanel {
                             .addGap(75, 75, 75)
                             .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnManagePrices, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -142,7 +146,7 @@ public class MarketingManagerWorkAreaJPanel1 extends javax.swing.JPanel {
                     .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(40, 40, 40)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnManagePrices, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(221, Short.MAX_VALUE))
         );
@@ -169,15 +173,11 @@ public class MarketingManagerWorkAreaJPanel1 extends javax.swing.JPanel {
 
     }//GEN-LAST:event_jButton10ActionPerformed
 
-    private void jButton6IdentifyEventsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6IdentifyEventsActionPerformed
+    private void btnManagePricesIdentifyEventsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManagePricesIdentifyEventsActionPerformed
         // TODO add your handling code here:
-        CardSequencePanel.removeAll();
-        //    IdentifyEventTypes iet= new IdentifyEventTypes(businessunit, CardSequencePanel);
-
-        //    CardSequencePanel.add("IdentifyEventTypes", iet);
-        ((java.awt.CardLayout) CardSequencePanel.getLayout()).next(CardSequencePanel);
+        showPricingAnalysisMenu(); 
         //((java.awt.CardLayout)CardSequencePanel.getLayout()).show(CardSequencePanel, "IdentifyEventTypes");
-}//GEN-LAST:event_jButton6IdentifyEventsActionPerformed
+}//GEN-LAST:event_btnManagePricesIdentifyEventsActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
         // TODO add your handling code here:
@@ -189,12 +189,81 @@ public class MarketingManagerWorkAreaJPanel1 extends javax.swing.JPanel {
         ((java.awt.CardLayout) CardSequencePanel.getLayout()).next(CardSequencePanel);
 }//GEN-LAST:event_jButton11ActionPerformed
 
+    private void showPricingAnalysisMenu() {
+        String[] options = {
+            "Task 4: Run Price Simulation",
+            "Task 5: Optimize Profit Margins"
+        };
+        
+        int choice = JOptionPane.showOptionDialog(
+            this,
+            "Select Pricing Analysis Function:",
+            "Manage Prices",
+            JOptionPane.DEFAULT_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            options,
+            options[0]
+        );
+        
+        if (choice == 0) {
+            openTask4();
+        } else if (choice == 1) {
+            openTask5();
+        }
+    }
+    
+    // 🔧 NEW: Open Task 4 - Run Simulation
+    private void openTask4() {
+        try {
+            CardSequencePanel.removeAll();
+            
+            RunSimulationPanel task4Panel = new RunSimulationPanel(business, CardSequencePanel);
+            CardSequencePanel.add("Task4Simulation", task4Panel);
+            
+            ((java.awt.CardLayout) CardSequencePanel.getLayout()).show(CardSequencePanel, "Task4Simulation");
+            
+            CardSequencePanel.revalidate();
+            CardSequencePanel.repaint();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Error opening Task 4: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+            e.printStackTrace();
+        }
+    }
+    
+    // 🔧 NEW: Open Task 5 - Optimize Profit
+    private void openTask5() {
+        try {
+            CardSequencePanel.removeAll();
+            
+            OptimizePanel task5Panel = new OptimizePanel(business, CardSequencePanel);
+            CardSequencePanel.add("Task5Optimize", task5Panel);
+            
+            ((java.awt.CardLayout) CardSequencePanel.getLayout()).show(CardSequencePanel, "Task5Optimize");
+            
+            CardSequencePanel.revalidate();
+            CardSequencePanel.repaint();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Error opening Task 5: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+            e.printStackTrace();
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnManagePrices;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 
