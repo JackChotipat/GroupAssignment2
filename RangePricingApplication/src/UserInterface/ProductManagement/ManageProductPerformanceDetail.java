@@ -128,21 +128,21 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
         jLabel7.setText("Marign around target");
         add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 200, 110, -1));
 
-        lowerPriceBtn.setText("jButton1");
+        lowerPriceBtn.setText("Lower Price");
         lowerPriceBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lowerPriceBtnActionPerformed(evt);
             }
         });
-        add(lowerPriceBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 220, -1, -1));
+        add(lowerPriceBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 220, -1, -1));
 
-        increasePriceBtn.setText("jButton2");
+        increasePriceBtn.setText("Increase Price");
         increasePriceBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 increasePriceBtnActionPerformed(evt);
             }
         });
-        add(increasePriceBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 220, -1, -1));
+        add(increasePriceBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 220, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void BackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackActionPerformed
