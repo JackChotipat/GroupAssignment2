@@ -94,4 +94,10 @@ public class ProductPerformanceReport {
         }
     }
     
+    public ProductPerformanceReport(Business business) {
+        this.business = business;
+        this.beforeState = new HashMap<>();
+        this.afterState = new HashMap<>();
+    }
+    
 }
