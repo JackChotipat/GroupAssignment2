@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import UserInterface.Main.WorkSpaceProfiles.OrderManagement.RunSimulationPanel;
 import UserInterface.Main.WorkSpaceProfiles.OrderManagement.OptimizePanel;
 import javax.swing.JOptionPane;
+import UserInterface.Main.WorkSpaceProfiles.OrderManagement.FinalReportPanel;
 
 /**
  *
@@ -180,13 +181,26 @@ public class MarketingManagerWorkAreaJPanel1 extends javax.swing.JPanel {
 }//GEN-LAST:event_btnManagePricesIdentifyEventsActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
-        // TODO add your handling code here:
-
-        CardSequencePanel.removeAll();
-//        ManageIncidents aos = new  ManageIncidents(businessunit, CardSequencePanel);
-        // aos.setAgenda(businessunit.getRiskManagementAgenda());
-//        CardSequencePanel.add("RiskAgendaObjectives", aos);
-        ((java.awt.CardLayout) CardSequencePanel.getLayout()).next(CardSequencePanel);
+// Task 6: Show Final Product Performance Report
+        try {
+            CardSequencePanel.removeAll();
+            
+            FinalReportPanel reportPanel = new FinalReportPanel(business, CardSequencePanel);
+            CardSequencePanel.add("FinalReport", reportPanel);
+            
+            ((java.awt.CardLayout) CardSequencePanel.getLayout()).show(CardSequencePanel, "FinalReport");
+            
+            CardSequencePanel.revalidate();
+            CardSequencePanel.repaint();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Error opening Final Report: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+            e.printStackTrace();
+        }        
 }//GEN-LAST:event_jButton11ActionPerformed
 
     private void showPricingAnalysisMenu() {
