@@ -34,6 +34,10 @@ public class DataGenerator {
 
         // 1️⃣ 生成 Supplier + Product
         for (int i = 1; i <= NUM_SUPPLIERS; i++) {
+       
+            
+            
+            
             Supplier sup = supplierDirectory.newSupplier("SUP" + i);
             
             for (int j = 1; j <= PRODUCTS_PER_SUPPLIER; j++) {
