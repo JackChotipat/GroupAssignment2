@@ -48,13 +48,12 @@ public class RunSimulationPanel extends JPanel {
     private JLabel afterMarginRateLabel;
     private JLabel marginRateChangeLabel;
     private JLabel recommendationLabel;
-    private ProductPerformanceReport performanceReport;
     // Store adjusted prices
     private HashMap<Product, Integer> adjustedPrices;
     
     public RunSimulationPanel(Business b, JPanel cardPanel) {
         super();
-        this.performanceReport = new ProductPerformanceReport(business);
+        
         this.business = b;
         this.cardSequencePanel = cardPanel;
         this.simulation = new Simulation(business);
@@ -286,7 +285,7 @@ public class RunSimulationPanel extends JPanel {
      * Run simulation with new prices
      */
     private void runSimulation() {
-        performanceReport.captureBeforeState();
+        business.getProductPerformanceReport().captureBeforeState();
         try {
             adjustedPrices.clear();
             int adjustmentCount = 0;
@@ -347,7 +346,7 @@ public class RunSimulationPanel extends JPanel {
             
             // Enable apply button
             applyChangesButton.setEnabled(true);
-            performanceReport.captureAfterState();
+            business.getProductPerformanceReport().captureAfterState();
             JOptionPane.showMessageDialog(this,
                 "Simulation completed!\n" +
                 "Adjusted " + adjustmentCount + " product(s)",
@@ -549,6 +548,6 @@ public class RunSimulationPanel extends JPanel {
     }
     
     public ProductPerformanceReport getPerformanceReport() {
-        return performanceReport;
-    }
+       return business.getProductPerformanceReport();
+   }
 }

@@ -25,7 +25,6 @@ public class OptimizePanel extends JPanel {
     private Business business;
     private ProfitOptimizer optimizer;
     private JPanel cardSequencePanel;
-    private ProductPerformanceReport performanceReport;
     
     // UI Components
     private JButton optimizeButton;
@@ -56,7 +55,6 @@ public class OptimizePanel extends JPanel {
     
     public OptimizePanel(Business b, JPanel cardPanel) {
         super();
-        this.performanceReport = new ProductPerformanceReport(business);
         this.business = b;
         this.cardSequencePanel = cardPanel;
         this.optimizer = new ProfitOptimizer(business);
@@ -370,7 +368,7 @@ public class OptimizePanel extends JPanel {
     
     private void runOptimizationWithUpdates() {
         optimizer = new ProfitOptimizer(business);
-        performanceReport.captureBeforeState();
+        business.getProductPerformanceReport().captureBeforeState();
         
         try {
             Thread.sleep(500); // Initial delay
@@ -392,7 +390,7 @@ public class OptimizePanel extends JPanel {
             logArea.append("\n" + "=".repeat(60) + "\n");
             logArea.append("   OPTIMIZATION COMPLETE\n");
             logArea.append("=".repeat(60) + "\n");
-            performanceReport.captureAfterState();
+            business.getProductPerformanceReport().captureAfterState();
             
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -537,6 +535,6 @@ public class OptimizePanel extends JPanel {
     }
     
     public ProductPerformanceReport getPerformanceReport() {
-        return performanceReport;
+        return business.getProductPerformanceReport();
     }
 }

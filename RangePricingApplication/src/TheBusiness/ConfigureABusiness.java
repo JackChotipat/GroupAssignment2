@@ -98,7 +98,7 @@ class ConfigureABusiness {
         Product products2p3 = productcatalog.newProduct("Color Printer 112", 422000, 540000, 495000);
         Product products2p4 = productcatalog.newProduct("Photocopier 922 ", 430000, 890000, 550000);
         Product products2p5 = productcatalog.newProduct("Low toner Scanner  102", 195000, 500100, 365102);
-        Product products2p6 = productcatalog.newProduct("Speedy color Scanner 611", 900000, 125000, 1650000);
+        Product products2p6 = productcatalog.newProduct("Speedy color Scanner 611", 900000, 1250000, 1650000);
         Product products2p7 = productcatalog.newProduct("Premier Printer 300", 322000, 470000, 736500);
         Product products2p8 = productcatalog.newProduct("Color Photocopier 500", 350000, 580000, 780000);
 

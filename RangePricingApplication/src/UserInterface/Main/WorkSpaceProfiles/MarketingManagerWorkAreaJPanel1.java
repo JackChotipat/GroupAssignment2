@@ -155,8 +155,6 @@ public class MarketingManagerWorkAreaJPanel1 extends javax.swing.JPanel {
 
     private void jButton4IdentifyResourceAssetsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4IdentifyResourceAssetsActionPerformed
         // TODO add your handling code here:
-        CardSequencePanel.removeAll();
-
         ManageTheBusinessJPanel aos = new ManageTheBusinessJPanel(business, CardSequencePanel);
 
         CardSequencePanel.add("ManageVulns", aos);
@@ -183,7 +181,6 @@ public class MarketingManagerWorkAreaJPanel1 extends javax.swing.JPanel {
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
 // Task 6: Show Final Product Performance Report
         try {
-            CardSequencePanel.removeAll();
             
             FinalReportPanel reportPanel = new FinalReportPanel(business, CardSequencePanel);
             CardSequencePanel.add("FinalReport", reportPanel);
@@ -230,7 +227,6 @@ public class MarketingManagerWorkAreaJPanel1 extends javax.swing.JPanel {
     // 🔧 NEW: Open Task 4 - Run Simulation
     private void openTask4() {
         try {
-            CardSequencePanel.removeAll();
             
             RunSimulationPanel task4Panel = new RunSimulationPanel(business, CardSequencePanel);
             CardSequencePanel.add("Task4Simulation", task4Panel);
@@ -253,7 +249,6 @@ public class MarketingManagerWorkAreaJPanel1 extends javax.swing.JPanel {
     // 🔧 NEW: Open Task 5 - Optimize Profit
     private void openTask5() {
         try {
-            CardSequencePanel.removeAll();
             
             OptimizePanel task5Panel = new OptimizePanel(business, CardSequencePanel);
             CardSequencePanel.add("Task5Optimize", task5Panel);
