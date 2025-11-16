@@ -100,4 +100,38 @@ public class ProductPerformanceReport {
         this.afterState = new HashMap<>();
     }
     
+    /**
+     * Capture BEFORE state - call this before running simulation/optimization
+     */
+    public void captureBeforeState() {
+        beforeState.clear();
+        
+        for (Supplier supplier : business.getSupplierDirectory().getSuplierList()) {
+            String supplierName = supplier.getName();
+            for (Product product : supplier.getProductCatalog().getProductList()) {
+                beforeState.put(product, new ProductSnapshot(product, supplierName));
+            }
+        }
+        
+        hasBeforeState = true;
+        System.out.println("✓ Captured BEFORE state for " + beforeState.size() + " products");
+    }
+    
+    /**
+     * Capture AFTER state - call this after running simulation/optimization
+     */
+    public void captureAfterState() {
+        afterState.clear();
+        
+        for (Supplier supplier : business.getSupplierDirectory().getSuplierList()) {
+            String supplierName = supplier.getName();
+            for (Product product : supplier.getProductCatalog().getProductList()) {
+                afterState.put(product, new ProductSnapshot(product, supplierName));
+            }
+        }
+        
+        hasAfterState = true;
+        System.out.println("✓ Captured AFTER state for " + afterState.size() + " products");
+    }
+    
 }
