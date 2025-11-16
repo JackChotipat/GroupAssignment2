@@ -134,4 +134,45 @@ public class ProductPerformanceReport {
         System.out.println("✓ Captured AFTER state for " + afterState.size() + " products");
     }
     
+    /**
+     * Get all product comparison data
+     */
+    public List<ProductComparisonData> getAllProductData() {
+        List<ProductComparisonData> dataList = new ArrayList<>();
+        
+        if (!hasBeforeState || !hasAfterState) {
+            System.err.println("WARNING: Need both before and after states!");
+            return dataList;
+        }
+        
+        for (Product product : beforeState.keySet()) {
+            ProductSnapshot before = beforeState.get(product);
+            ProductSnapshot after = afterState.get(product);
+            
+            if (before != null && after != null) {
+                ProductComparisonData data = new ProductComparisonData();
+                data.supplierName = before.supplierName;
+                data.productName = before.productName;
+                
+                data.targetPriceBefore = before.targetPrice;
+                data.targetPriceAfter = after.targetPrice;
+                
+                data.salesAboveBefore = before.salesAbove;
+                data.salesBelowBefore = before.salesBelow;
+                data.salesAboveAfter = after.salesAbove;
+                data.salesBelowAfter = after.salesBelow;
+                
+                data.revenueBefore = before.revenue;
+                data.revenueAfter = after.revenue;
+                
+                data.profitBefore = before.profit;
+                data.profitAfter = after.profit;
+                
+                dataList.add(data);
+            }
+        }
+        
+        return dataList;
+    }
+    
 }
