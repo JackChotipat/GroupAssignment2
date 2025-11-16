@@ -1,6 +1,10 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * ProductPerformanceReport - Generates comprehensive product performance reports
+ * Integrates with Simulation class to track before/after price adjustments
+ * Task 6: Generate Final Product Performance Report
+ * 
+ * @author [Your Name]
+ * @date 2025-11-15
  */
 package TheBusiness.Business;
 
@@ -10,10 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- *
- * @author User PC
- */
 public class ProductPerformanceReport {
     
     private Business business;
@@ -308,5 +308,4 @@ public class ProductPerformanceReport {
     
     public boolean hasBeforeState() { return hasBeforeState; }
     public boolean hasAfterState() { return hasAfterState; }
-    
 }
