@@ -240,7 +240,8 @@ if (business.getSupplierDirectory().getSuplierList().isEmpty()) {
             supplier.getProductCatalog().getProductList().get(0);
 
     ManageProductPerformanceDetail panel =
-            new ManageProductPerformanceDetail(selectedProduct, CardSequencePanel);
+            new ManageProductPerformanceDetail(business, selectedProduct, CardSequencePanel);
+
 
     // ✅ 不用 removeAll()
     CardSequencePanel.add("ProductPerformanceDetail", panel);

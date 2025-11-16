@@ -256,7 +256,7 @@ public class ManageSuppliersJPanel extends javax.swing.JPanel {
     private void NextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NextActionPerformed
         // TODO add your handling code here:
         
-        ManageProductPerformanceDetail mppd = new ManageProductPerformanceDetail(selectedproduct, CardSequencePanel);
+        ManageProductPerformanceDetail mppd = new ManageProductPerformanceDetail(business, selectedproduct, CardSequencePanel);
         CardSequencePanel.add(mppd);
         ((java.awt.CardLayout) CardSequencePanel.getLayout()).next(CardSequencePanel);
 
