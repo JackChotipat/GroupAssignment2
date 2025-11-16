@@ -252,4 +252,61 @@ public class ProductPerformanceReport {
         }
     }
     
+    /**
+     * Generate text report for export
+     */
+    public String generateTextReport() {
+        StringBuilder report = new StringBuilder();
+        
+        report.append("=".repeat(120)).append("\n");
+        report.append("                    FINAL PRODUCT PERFORMANCE REPORT\n");
+        report.append("=".repeat(120)).append("\n\n");
+        
+        // Summary section
+        ReportSummary summary = getSummary();
+        report.append("SUMMARY:\n");
+        report.append(String.format("  Total Products: %d\n", summary.totalProducts));
+        report.append(String.format("  Products Changed: %d (↑%d  ↓%d)\n", 
+            summary.productsChanged, summary.productsIncreased, summary.productsDecreased));
+        report.append(String.format("  Total Revenue Before: $%,d\n", summary.totalRevenueBefore));
+        report.append(String.format("  Total Revenue After:  $%,d\n", summary.totalRevenueAfter));
+        report.append(String.format("  Revenue Change:       $%,d (%.2f%%)\n", 
+            summary.getTotalRevenueChange(), summary.getTotalRevenueChangePercent()));
+        report.append(String.format("  Total Profit Before:  $%,d\n", summary.totalProfitBefore));
+        report.append(String.format("  Total Profit After:   $%,d\n", summary.totalProfitAfter));
+        report.append(String.format("  Profit Change:        $%,d (%.2f%%)\n\n", 
+            summary.getTotalProfitChange(), summary.getTotalProfitChangePercent()));
+        
+        // Changed products section
+        List<ProductComparisonData> changedProducts = getChangedProducts();
+        if (!changedProducts.isEmpty()) {
+            report.append("PRODUCTS WITH TARGET PRICE ADJUSTMENTS:\n");
+            report.append("-".repeat(120)).append("\n");
+            report.append(String.format("%-20s %-30s %12s %12s %10s\n",
+                "Supplier", "Product", "Target Before", "Target After", "Change %"));
+            report.append("-".repeat(120)).append("\n");
+            
+            for (ProductComparisonData data : changedProducts) {
+                report.append(String.format("%-20s %-30s $%,10d $%,10d %9.1f%%\n",
+                    truncate(data.supplierName, 20),
+                    truncate(data.productName, 30),
+                    data.targetPriceBefore,
+                    data.targetPriceAfter,
+                    data.getTargetPriceChangePercent()
+                ));
+            }
+        }
+        
+        report.append("=".repeat(120)).append("\n");
+        return report.toString();
+    }
+    
+    private String truncate(String str, int length) {
+        if (str.length() <= length) return str;
+        return str.substring(0, length - 3) + "...";
+    }
+    
+    public boolean hasBeforeState() { return hasBeforeState; }
+    public boolean hasAfterState() { return hasAfterState; }
+    
 }
