@@ -21,6 +21,7 @@ import TheBusiness.SalesManagement.SalesPersonDirectory;
 import TheBusiness.Supplier.Supplier;
 import TheBusiness.Supplier.SupplierDirectory;
 import TheBusiness.UserAccountManagement.UserAccountDirectory;
+import TheBusiness.Business.ProductPerformanceReport;
 
 /**
  *
@@ -43,6 +44,7 @@ public class Business {
     UserAccountDirectory useraccountdirectory;
     MarketingPersonDirectory marketingpersondirectory;
     MasterSolutionOrderList mastersolutionorderlist;
+    private ProductPerformanceReport productPerformanceReport;
 
 
     public Business(String n) {
@@ -69,8 +71,13 @@ public class Business {
 
         solutionoffercatalog = new SolutionOfferCatalog();
         mastersolutionorderlist  = new MasterSolutionOrderList();
+        this.productPerformanceReport = new ProductPerformanceReport(this);
 
     }
+    
+    public ProductPerformanceReport getProductPerformanceReport() {
+       return productPerformanceReport;
+   }
   
     public int getSalesVolume() {
         return masterorderlist.getSalesVolume();

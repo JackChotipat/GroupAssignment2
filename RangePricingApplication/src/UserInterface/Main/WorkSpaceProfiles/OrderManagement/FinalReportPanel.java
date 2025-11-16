@@ -46,7 +46,7 @@ public class FinalReportPanel extends JPanel {
         super();
         this.business = business;
         this.cardSequencePanel = cardPanel;
-        this.report = new ProductPerformanceReport(business);
+        this.report = business.getProductPerformanceReport();
         
         initComponents();
     }
@@ -271,12 +271,15 @@ public class FinalReportPanel extends JPanel {
         backButton.setBackground(new Color(150, 150, 150));
         backButton.setForeground(Color.WHITE);
         backButton.setFont(new Font("Arial", Font.BOLD, 12));
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardSequencePanel.removeAll();
-                ((java.awt.CardLayout) cardSequencePanel.getLayout()).previous(cardSequencePanel);
+        backButton.addActionListener(e -> {
+            Container parent = cardSequencePanel;
+            if (parent != null) {
+                parent.remove(this);
+                parent.revalidate();
+                parent.repaint();
             }
+            CardLayout layout = (CardLayout) cardSequencePanel.getLayout();
+            layout.previous(cardSequencePanel);
         });
         
         panel.add(refreshButton);
