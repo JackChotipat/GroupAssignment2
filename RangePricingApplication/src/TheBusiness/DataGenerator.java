@@ -83,6 +83,11 @@ public class DataGenerator {
 
                 Order order = new Order(cp); // ✔ 完全匹配模板构造器
 
+                
+                
+                
+                
+                
                 int numItems = random.nextInt(MAX_ITEMS_PER_ORDER) + 1;
 
                 for (int m = 0; m < numItems; m++) {
