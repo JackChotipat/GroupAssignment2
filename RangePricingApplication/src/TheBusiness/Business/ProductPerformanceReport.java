@@ -175,4 +175,81 @@ public class ProductPerformanceReport {
         return dataList;
     }
     
+    /**
+     * Get only products that had price changes
+     */
+    public List<ProductComparisonData> getChangedProducts() {
+        List<ProductComparisonData> changed = new ArrayList<>();
+        
+        for (ProductComparisonData data : getAllProductData()) {
+            if (data.getTargetPriceChange() != 0) {
+                changed.add(data);
+            }
+        }
+        
+        return changed;
+    }
+    
+    /**
+     * Get summary statistics
+     */
+    public ReportSummary getSummary() {
+        return new ReportSummary();
+    }
+    
+    /**
+     * Summary statistics for the report
+     */
+    public class ReportSummary {
+        public int totalProducts;
+        public int productsChanged;
+        public int productsIncreased;
+        public int productsDecreased;
+        public int totalRevenueBefore;
+        public int totalRevenueAfter;
+        public int totalProfitBefore;
+        public int totalProfitAfter;
+        
+        public ReportSummary() {
+            calculate();
+        }
+        
+        private void calculate() {
+            List<ProductComparisonData> allData = getAllProductData();
+            totalProducts = allData.size();
+            
+            for (ProductComparisonData data : allData) {
+                totalRevenueBefore += data.revenueBefore;
+                totalRevenueAfter += data.revenueAfter;
+                totalProfitBefore += data.profitBefore;
+                totalProfitAfter += data.profitAfter;
+                
+                int change = data.getTargetPriceChange();
+                if (change != 0) {
+                    productsChanged++;
+                    if (change > 0) productsIncreased++;
+                    else productsDecreased++;
+                }
+            }
+        }
+        
+        public int getTotalRevenueChange() {
+            return totalRevenueAfter - totalRevenueBefore;
+        }
+        
+        public double getTotalRevenueChangePercent() {
+            if (totalRevenueBefore == 0) return 0;
+            return ((double)getTotalRevenueChange() / totalRevenueBefore) * 100;
+        }
+        
+        public int getTotalProfitChange() {
+            return totalProfitAfter - totalProfitBefore;
+        }
+        
+        public double getTotalProfitChangePercent() {
+            if (totalProfitBefore == 0) return 0;
+            return ((double)getTotalProfitChange() / totalProfitBefore) * 100;
+        }
+    }
+    
 }
