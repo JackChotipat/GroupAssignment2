@@ -90,7 +90,7 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
                 productNameTextFieldActionPerformed(evt);
             }
         });
-        add(productNameTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, 150, -1));
+        add(productNameTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 63, 330, 60));
         add(productFrequencyAboveTargetTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 170, 160, -1));
 
         jLabel4.setText("Frequency Above Target");
