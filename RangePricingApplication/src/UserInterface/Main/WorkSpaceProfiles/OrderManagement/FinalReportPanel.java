@@ -272,14 +272,11 @@ public class FinalReportPanel extends JPanel {
         backButton.setForeground(Color.WHITE);
         backButton.setFont(new Font("Arial", Font.BOLD, 12));
         backButton.addActionListener(e -> {
-            Container parent = cardSequencePanel;
-            if (parent != null) {
-                parent.remove(this);
-                parent.revalidate();
-                parent.repaint();
-            }
+            cardSequencePanel.remove(this);
             CardLayout layout = (CardLayout) cardSequencePanel.getLayout();
-            layout.previous(cardSequencePanel);
+            layout.show(cardSequencePanel, "Marketing");
+            cardSequencePanel.revalidate();
+            cardSequencePanel.repaint();
         });
         
         panel.add(refreshButton);
@@ -450,4 +447,5 @@ public class FinalReportPanel extends JPanel {
         this.report = report;
         loadReportData();
     }
+
 }
