@@ -20,7 +20,9 @@ public class DataGenerator {
     private static final int MIN_ORDERS_PER_CUSTOMER = 1;
     private static final int MAX_ORDERS_PER_CUSTOMER = 3;
     private static final int MAX_ITEMS_PER_ORDER = 10;
-
+    //private static final int MAX_ITEMS_PER_ORDER = 10;
+    
+    
     Faker faker = new Faker();
     Random random = new Random();
 
