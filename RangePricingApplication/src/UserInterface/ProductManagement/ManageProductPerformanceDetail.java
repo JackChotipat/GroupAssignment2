@@ -33,7 +33,6 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
         this.business = business;
         this.selectedproduct = product;
         this.CardSequencePanel = jp;
-
         initComponents();
         populateProductDropdown();
         displayProductPerformance();
@@ -200,7 +199,7 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
         return;
     }
 
-    int newTarget = (int)(oldTarget * 1.1); // 漲 10%
+    int newTarget = (int)(oldTarget * 1.1);
     selectedproduct.updateProduct(
         selectedproduct.getFloorPrice(),
         selectedproduct.getCeilingPrice(),
