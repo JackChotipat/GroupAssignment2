@@ -154,7 +154,7 @@ public class ManageSuppliersJPanel extends javax.swing.JPanel {
                 BackActionPerformed(evt);
             }
         });
-        add(Back, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, -1, -1));
+        add(Back, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, 90, -1));
 
         Next.setText("Next >>");
         Next.addActionListener(new java.awt.event.ActionListener() {
