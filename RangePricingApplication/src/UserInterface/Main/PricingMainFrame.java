@@ -126,7 +126,6 @@ public class PricingMainFrame extends javax.swing.JFrame {
             CardSequencePanel.removeAll();
             CardSequencePanel.add("Marketing", marketingworkarea);
             ((java.awt.CardLayout) CardSequencePanel.getLayout()).next(CardSequencePanel);
-
         }
 
         if (profile instanceof EmployeeProfile) {
