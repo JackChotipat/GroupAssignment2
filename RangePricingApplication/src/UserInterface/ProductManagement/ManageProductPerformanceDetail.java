@@ -23,11 +23,9 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
     /**
      * Creates new form ManageSuppliersJPanel
      */
-     JPanel CardSequencePanel;
+    JPanel CardSequencePanel;
     Product selectedproduct;
     Business business;
-
-    // 用來把 ComboBox 的 String (名稱) → Product 物件
     HashMap<String, Product> productMap = new HashMap<>();
 
      public ManageProductPerformanceDetail(Business business, Product product, JPanel jp) {
