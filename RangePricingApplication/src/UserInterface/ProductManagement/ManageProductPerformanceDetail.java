@@ -205,7 +205,7 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
     selectedproduct.updateProduct(
         selectedproduct.getFloorPrice(),
         selectedproduct.getCeilingPrice(),
-        newTarget //load new target
+        newTarget 
     );
 
     javax.swing.JOptionPane.showMessageDialog(this, 
