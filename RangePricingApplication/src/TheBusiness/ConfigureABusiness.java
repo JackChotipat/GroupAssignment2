@@ -165,6 +165,11 @@ class ConfigureABusiness {
         
         
         */
+        new DataGenerator().generateData(
+    business.getSupplierDirectory(),
+    business.getCustomerDirectory()
+);
+
         
         return business;
 
