@@ -7,9 +7,9 @@ package TheBusiness.Business;
 import TheBusiness.ProductManagement.Product;
 import TheBusiness.Supplier.Supplier;
 import java.util.HashMap;
-
+ 
 /**
- * Task 4: Price Simulation Engine
+ *  * Price Simulation Engine for Task 4
  * Modified to include Margin Rate calculation (per TA feedback)
  * 
  * @author 123
