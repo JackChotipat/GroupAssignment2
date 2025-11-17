@@ -185,7 +185,7 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
     javax.swing.JOptionPane.showMessageDialog(this, 
         "Target price lowered from $" + oldTarget + " → $" + newTarget);
 
-    refreshTable(); // 重新載入績效數據
+    refreshTable(); 
     }//GEN-LAST:event_lowerPriceBtnActionPerformed
 
     private void increasePriceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_increasePriceBtnActionPerformed
