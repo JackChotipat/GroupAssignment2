@@ -9,10 +9,12 @@
  * - Export functionality to text file
  * - Color-coded visualization of changes
  * - Detailed product-level analysis
+ * - Keyboard shortcuts for common actions
+ * - Tooltips for improved usability
  * 
  * @author Marketing Team
  * @date 2025-11-16
- * @version 2.0
+ * @version 2.1
  */
 package UserInterface.Main.WorkSpaceProfiles.OrderManagement;
 
@@ -25,8 +27,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -53,6 +54,13 @@ public class FinalReportPanel extends JPanel {
     private JComboBox<String> filterComboBox;
     private JLabel statusLabel;
     
+    // UI Constants
+    private static final Color PRIMARY_COLOR = new Color(0, 153, 153);
+    private static final Color SUCCESS_COLOR = new Color(34, 139, 34);
+    private static final Color INFO_COLOR = new Color(102, 153, 255);
+    private static final Color WARNING_COLOR = new Color(220, 100, 50);
+    private static final Color NEUTRAL_COLOR = new Color(150, 150, 150);
+    
     // Formatting
     private static final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
     
@@ -69,6 +77,7 @@ public class FinalReportPanel extends JPanel {
         
         initComponents();
         updateStatusLabel();
+        setupKeyboardShortcuts();
     }
     
     /**
@@ -76,7 +85,7 @@ public class FinalReportPanel extends JPanel {
      */
     private void initComponents() {
         setLayout(new BorderLayout(0, 5));
-        setBackground(new Color(0, 153, 153));
+        setBackground(PRIMARY_COLOR);
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
         // Title Panel
@@ -93,11 +102,46 @@ public class FinalReportPanel extends JPanel {
     }
     
     /**
+     * Setup keyboard shortcuts for common actions
+     */
+    private void setupKeyboardShortcuts() {
+        // F5 to refresh
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+            KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), "refresh");
+        getActionMap().put("refresh", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadReportData();
+            }
+        });
+        
+        // Ctrl+E to export
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+            KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK), "export");
+        getActionMap().put("export", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exportReport();
+            }
+        });
+        
+        // ESC to go back
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "back");
+        getActionMap().put("back", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleBack();
+            }
+        });
+    }
+    
+    /**
      * Create the title panel with header information
      */
     private JPanel createTitlePanel() {
         JPanel panel = new JPanel();
-        panel.setBackground(new Color(0, 153, 153));
+        panel.setBackground(PRIMARY_COLOR);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createEmptyBorder(5, 10, 15, 10));
         
@@ -143,6 +187,7 @@ public class FinalReportPanel extends JPanel {
         summaryTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         summaryTextArea.setBackground(new Color(240, 248, 255));
         summaryTextArea.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        summaryTextArea.setToolTipText("Executive summary of performance changes");
         
         JScrollPane summaryScrollPane = new JScrollPane(summaryTextArea);
         summaryScrollPane.setBorder(BorderFactory.createTitledBorder(
@@ -183,6 +228,7 @@ public class FinalReportPanel extends JPanel {
             "Show Revenue Decrease"
         });
         filterComboBox.setPreferredSize(new Dimension(200, 25));
+        filterComboBox.setToolTipText("Filter products by performance criteria");
         filterComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -219,6 +265,7 @@ public class FinalReportPanel extends JPanel {
         };
         
         reportTable = new JTable(tableModel);
+        reportTable.setToolTipText("Product performance comparison - Before vs After");
         styleTable();
         
         JScrollPane scrollPane = new JScrollPane(reportTable);
@@ -247,18 +294,18 @@ public class FinalReportPanel extends JPanel {
         header.setReorderingAllowed(false);
         
         // Column widths
-        reportTable.getColumnModel().getColumn(0).setPreferredWidth(120);  // Supplier
-        reportTable.getColumnModel().getColumn(1).setPreferredWidth(180);  // Product
-        reportTable.getColumnModel().getColumn(2).setPreferredWidth(100);  // Revenue Before
-        reportTable.getColumnModel().getColumn(3).setPreferredWidth(100);  // Revenue After
-        reportTable.getColumnModel().getColumn(4).setPreferredWidth(80);   // Revenue Δ%
-        reportTable.getColumnModel().getColumn(5).setPreferredWidth(100);  // Target Before
-        reportTable.getColumnModel().getColumn(6).setPreferredWidth(100);  // Target After
-        reportTable.getColumnModel().getColumn(7).setPreferredWidth(80);   // Target Δ%
-        reportTable.getColumnModel().getColumn(8).setPreferredWidth(90);   // Sales Above (B)
-        reportTable.getColumnModel().getColumn(9).setPreferredWidth(90);   // Sales Below (B)
-        reportTable.getColumnModel().getColumn(10).setPreferredWidth(90);  // Sales Above (A)
-        reportTable.getColumnModel().getColumn(11).setPreferredWidth(90);  // Sales Below (A)
+        reportTable.getColumnModel().getColumn(0).setPreferredWidth(120);
+        reportTable.getColumnModel().getColumn(1).setPreferredWidth(180);
+        reportTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+        reportTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+        reportTable.getColumnModel().getColumn(4).setPreferredWidth(80);
+        reportTable.getColumnModel().getColumn(5).setPreferredWidth(100);
+        reportTable.getColumnModel().getColumn(6).setPreferredWidth(100);
+        reportTable.getColumnModel().getColumn(7).setPreferredWidth(80);
+        reportTable.getColumnModel().getColumn(8).setPreferredWidth(90);
+        reportTable.getColumnModel().getColumn(9).setPreferredWidth(90);
+        reportTable.getColumnModel().getColumn(10).setPreferredWidth(90);
+        reportTable.getColumnModel().getColumn(11).setPreferredWidth(90);
         
         // Custom renderer for alternating rows and colored percentages
         reportTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
@@ -269,32 +316,24 @@ public class FinalReportPanel extends JPanel {
                 
                 if (!isSelected) {
                     // Alternating row colors
-                    if (row % 2 == 0) {
-                        c.setBackground(Color.WHITE);
-                    } else {
-                        c.setBackground(new Color(245, 245, 245));
-                    }
+                    c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(245, 245, 245));
                     c.setForeground(Color.BLACK);
                     
                     // Color code percentage changes
                     if ((column == 4 || column == 7) && value instanceof String) {
                         String strValue = (String) value;
                         if (strValue.startsWith("+")) {
-                            c.setForeground(new Color(0, 128, 0)); // Green for positive
+                            c.setForeground(new Color(0, 128, 0));
                             c.setFont(c.getFont().deriveFont(Font.BOLD));
                         } else if (strValue.startsWith("-")) {
-                            c.setForeground(new Color(200, 0, 0)); // Red for negative
+                            c.setForeground(new Color(200, 0, 0));
                             c.setFont(c.getFont().deriveFont(Font.BOLD));
                         }
                     }
                 }
                 
                 // Right align numeric columns
-                if (column >= 2) {
-                    ((JLabel) c).setHorizontalAlignment(SwingConstants.RIGHT);
-                } else {
-                    ((JLabel) c).setHorizontalAlignment(SwingConstants.LEFT);
-                }
+                ((JLabel) c).setHorizontalAlignment(column >= 2 ? SwingConstants.RIGHT : SwingConstants.LEFT);
                 
                 return c;
             }
@@ -306,57 +345,46 @@ public class FinalReportPanel extends JPanel {
      */
     private JPanel createControlPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        panel.setBackground(new Color(0, 153, 153));
+        panel.setBackground(PRIMARY_COLOR);
         
         // Load/Refresh button
         refreshButton = new JButton("Load Report Data");
         refreshButton.setPreferredSize(new Dimension(150, 35));
-        refreshButton.setBackground(new Color(34, 139, 34));
+        refreshButton.setBackground(SUCCESS_COLOR);
         refreshButton.setForeground(Color.WHITE);
         refreshButton.setFont(new Font("Arial", Font.BOLD, 12));
         refreshButton.setFocusPainted(false);
-        refreshButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadReportData();
-            }
-        });
+        refreshButton.setToolTipText("Load report data (F5)");
+        refreshButton.addActionListener(e -> loadReportData());
         
         // Export button
         exportButton = new JButton("Export to Text");
         exportButton.setPreferredSize(new Dimension(150, 35));
-        exportButton.setBackground(new Color(102, 153, 255));
+        exportButton.setBackground(INFO_COLOR);
         exportButton.setForeground(Color.WHITE);
         exportButton.setFont(new Font("Arial", Font.BOLD, 12));
         exportButton.setFocusPainted(false);
-        exportButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                exportReport();
-            }
-        });
+        exportButton.setToolTipText("Export report to text file (Ctrl+E)");
+        exportButton.addActionListener(e -> exportReport());
         
         // Clear button
         clearButton = new JButton("Clear Report");
         clearButton.setPreferredSize(new Dimension(120, 35));
-        clearButton.setBackground(new Color(220, 100, 50));
+        clearButton.setBackground(WARNING_COLOR);
         clearButton.setForeground(Color.WHITE);
         clearButton.setFont(new Font("Arial", Font.BOLD, 12));
         clearButton.setFocusPainted(false);
-        clearButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearReport();
-            }
-        });
+        clearButton.setToolTipText("Clear displayed report data");
+        clearButton.addActionListener(e -> clearReport());
         
         // Back button
         backButton = new JButton("Back");
         backButton.setPreferredSize(new Dimension(100, 35));
-        backButton.setBackground(new Color(150, 150, 150));
+        backButton.setBackground(NEUTRAL_COLOR);
         backButton.setForeground(Color.WHITE);
         backButton.setFont(new Font("Arial", Font.BOLD, 12));
         backButton.setFocusPainted(false);
+        backButton.setToolTipText("Return to previous screen (ESC)");
         backButton.addActionListener(e -> handleBack());
         
         panel.add(refreshButton);
@@ -377,7 +405,7 @@ public class FinalReportPanel extends JPanel {
             cardSequencePanel.revalidate();
             cardSequencePanel.repaint();
         } catch (Exception e) {
-            System.err.println("Error in handleBack: " + e.getMessage());
+            System.err.println("Error navigating back: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -408,19 +436,25 @@ public class FinalReportPanel extends JPanel {
             // Update status
             updateStatusLabel();
             
-            // Show success message
-            JOptionPane.showMessageDialog(this,
+            // Show success message with key metrics
+            String message = String.format(
                 "Report loaded successfully!\n\n" +
-                "Total products: " + summary.totalProducts + "\n" +
-                "Products changed: " + summary.productsChanged + "\n" +
-                "Revenue change: " + currencyFormat.format(summary.getTotalRevenueChange()),
-                "Report Loaded",
+                "Total products: %,d\n" +
+                "Products changed: %,d\n" +
+                "Revenue change: %s (%+.2f%%)",
+                summary.totalProducts,
+                summary.productsChanged,
+                currencyFormat.format(summary.getTotalRevenueChange()),
+                summary.getTotalRevenueChangePercent()
+            );
+            
+            JOptionPane.showMessageDialog(this, message, "Report Loaded",
                 JOptionPane.INFORMATION_MESSAGE);
                 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
                 "Error loading report:\n" + e.getMessage(),
-                "Error",
+                "Load Error",
                 JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
@@ -500,7 +534,6 @@ public class FinalReportPanel extends JPanel {
         int filterIndex = filterComboBox.getSelectedIndex();
         List<ProductComparisonData> dataList = report.getAllProductData();
         
-        int displayedCount = 0;
         for (ProductComparisonData data : dataList) {
             boolean include = false;
             
@@ -521,7 +554,6 @@ public class FinalReportPanel extends JPanel {
             
             if (include) {
                 addProductRow(data);
-                displayedCount++;
             }
         }
         
