@@ -23,9 +23,10 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
     /**
      * Creates new form ManageSuppliersJPanel
      */
+    Business business;
     JPanel CardSequencePanel;
     Product selectedproduct;
-    Business business;
+    
     HashMap<String, Product> productMap = new HashMap<>();
 
      public ManageProductPerformanceDetail(Business business, Product product, JPanel jp) {
