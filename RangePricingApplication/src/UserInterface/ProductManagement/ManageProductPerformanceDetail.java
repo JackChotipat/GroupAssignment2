@@ -165,7 +165,7 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
 
     private void lowerPriceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lowerPriceBtnActionPerformed
         // TODO add your handling code here:
-        int oldTarget = selectedproduct.getTargetPrice();
+    int oldTarget = selectedproduct.getTargetPrice();
     int below = selectedproduct.getNumberOfProductSalesBelowTarget();
     int above = selectedproduct.getNumberOfProductSalesAboveTarget();
 
@@ -186,6 +186,7 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
         "Target price lowered from $" + oldTarget + " → $" + newTarget);
 
     refreshTable(); 
+    
     }//GEN-LAST:event_lowerPriceBtnActionPerformed
 
     private void increasePriceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_increasePriceBtnActionPerformed
