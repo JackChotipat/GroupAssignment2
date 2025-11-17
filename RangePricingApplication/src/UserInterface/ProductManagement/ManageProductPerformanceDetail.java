@@ -10,6 +10,9 @@ import TheBusiness.ProductManagement.Product;
 import TheBusiness.ProductManagement.ProductSummary;
 import TheBusiness.Supplier.Supplier;
 import javax.swing.JPanel;
+import java.util.HashMap;
+
+
 
 /**
  *
@@ -21,32 +24,20 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
      * Creates new form ManageSuppliersJPanel
      */
     JPanel CardSequencePanel;
-    Supplier selectedsupplier;
     Product selectedproduct;
+    Business business;
+    HashMap<String, Product> productMap = new HashMap<>();
 
-    public ManageProductPerformanceDetail(Product product, JPanel jp) {
+     public ManageProductPerformanceDetail(Business business, Product product, JPanel jp) {
 
-        CardSequencePanel = jp;
+        this.business = business;
         this.selectedproduct = product;
+        this.CardSequencePanel = jp;
         initComponents();
-        refreshTable();
-
+        populateProductDropdown();
+        displayProductPerformance();
     }
 
-
-    public void refreshTable() {
-
-       
-        ProductSummary productsummary = new ProductSummary(selectedproduct);
-
-        productNameTextField.setText(selectedproduct.toString());
-        String revenues = String.valueOf(productsummary.getSalesRevenues());
-        productRevenueTextField.setText(revenues);
-        productFrequencyAboveTargetTextField.setText( String.valueOf(productsummary.getNumberAboveTarget()));
-        productFrequencyBelowTargetTextField.setText( String.valueOf(productsummary.getNumberBelowTarget()));
-        productPricePerformanceTextField.setText(String.valueOf(productsummary.getProductPricePerformance()));
-
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -69,6 +60,9 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         productPricePerformanceTextField = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
+        lowerPriceBtn = new javax.swing.JButton();
+        increasePriceBtn = new javax.swing.JButton();
+        jComboBox1 = new javax.swing.JComboBox<>();
 
         setBackground(new java.awt.Color(0, 153, 153));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -93,35 +87,59 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
                 productNameTextFieldActionPerformed(evt);
             }
         });
-        add(productNameTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 150, -1));
-        add(productFrequencyAboveTargetTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 170, 150, -1));
+        add(productNameTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 63, 330, 60));
+        add(productFrequencyAboveTargetTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 170, 160, -1));
 
         jLabel4.setText("Frequency Above Target");
-        add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 150, 150, -1));
+        add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 150, 150, 20));
 
         productRevenueTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 productRevenueTextFieldActionPerformed(evt);
             }
         });
-        add(productRevenueTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, 150, -1));
+        add(productRevenueTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, 190, -1));
 
         jLabel5.setText("Sales Revenues");
         add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 200, 110, -1));
-        add(productFrequencyBelowTargetTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 170, 150, -1));
+        add(productFrequencyBelowTargetTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 170, 160, -1));
 
         jLabel6.setText("Frequency Below Target");
-        add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 150, 150, -1));
+        add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 150, 150, 20));
 
         productPricePerformanceTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 productPricePerformanceTextFieldActionPerformed(evt);
             }
         });
-        add(productPricePerformanceTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 220, 150, -1));
+        add(productPricePerformanceTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 220, 170, 30));
 
         jLabel7.setText("Marign around target");
-        add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 200, 110, -1));
+        add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 200, 160, 20));
+
+        lowerPriceBtn.setText("Lower Price");
+        lowerPriceBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lowerPriceBtnActionPerformed(evt);
+            }
+        });
+        add(lowerPriceBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 220, -1, 20));
+
+        increasePriceBtn.setText("Increase Price");
+        increasePriceBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                increasePriceBtnActionPerformed(evt);
+            }
+        });
+        add(increasePriceBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(414, 220, -1, 20));
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+        add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 190, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void BackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackActionPerformed
@@ -144,20 +162,115 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_productPricePerformanceTextFieldActionPerformed
 
+    private void lowerPriceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lowerPriceBtnActionPerformed
+        // TODO add your handling code here:
+        int oldTarget = selectedproduct.getTargetPrice();
+    int below = selectedproduct.getNumberOfProductSalesBelowTarget();
+    int above = selectedproduct.getNumberOfProductSalesAboveTarget();
+
+    if (below <= above) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Product sales are not below target — no need to lower price.");
+        return;
+    }
+
+    int newTarget = (int)(oldTarget * 0.9); // 降 10%
+    selectedproduct.updateProduct(
+        selectedproduct.getFloorPrice(),
+        selectedproduct.getCeilingPrice(),
+        newTarget
+    );
+
+    javax.swing.JOptionPane.showMessageDialog(this, 
+        "Target price lowered from $" + oldTarget + " → $" + newTarget);
+
+    refreshTable(); 
+    }//GEN-LAST:event_lowerPriceBtnActionPerformed
+
+    private void increasePriceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_increasePriceBtnActionPerformed
+        // TODO add your handling code here:
+         int oldTarget = selectedproduct.getTargetPrice();
+    int below = selectedproduct.getNumberOfProductSalesBelowTarget();
+    int above = selectedproduct.getNumberOfProductSalesAboveTarget();
+
+    if (above <= below) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Product sales have not surpassed target — cannot increase price.");
+        return;
+    }
+
+    int newTarget = (int)(oldTarget * 1.1);
+    selectedproduct.updateProduct(
+        selectedproduct.getFloorPrice(),
+        selectedproduct.getCeilingPrice(),
+        newTarget
+    );
+
+    javax.swing.JOptionPane.showMessageDialog(this, 
+        "Target price increased from $" + oldTarget + " → $" + newTarget);
+
+    refreshTable();
+    }//GEN-LAST:event_increasePriceBtnActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+         String name = (String) jComboBox1.getSelectedItem();
+
+        if (name != null && productMap.containsKey(name)) {
+            selectedproduct = productMap.get(name);
+            displayProductPerformance();
+        }
+
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Back;
+    private javax.swing.JButton increasePriceBtn;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JButton lowerPriceBtn;
     private javax.swing.JTextField productFrequencyAboveTargetTextField;
     private javax.swing.JTextField productFrequencyBelowTargetTextField;
     private javax.swing.JTextField productNameTextField;
     private javax.swing.JTextField productPricePerformanceTextField;
     private javax.swing.JTextField productRevenueTextField;
     // End of variables declaration//GEN-END:variables
+
+    private void displayProductPerformance() {
+        if (selectedproduct == null) return;
+
+        ProductSummary productsummary = new ProductSummary(selectedproduct);
+
+        productNameTextField.setText(selectedproduct.toString());
+        productRevenueTextField.setText(String.format("%.2f", productsummary.getSalesRevenues()));
+        productFrequencyAboveTargetTextField.setText(String.valueOf(productsummary.getNumberAboveTarget()));
+        productFrequencyBelowTargetTextField.setText(String.valueOf(productsummary.getNumberBelowTarget()));
+        productPricePerformanceTextField.setText(String.format("%.2f%%", productsummary.getProductPricePerformance()));
+    }
+    
+    private void refreshTable() {
+        displayProductPerformance();
+    }
+
+    private void populateProductDropdown() {
+
+        jComboBox1.removeAllItems();
+        productMap.clear();
+
+        for (Supplier supplier : business.getSupplierDirectory().getSuplierList()) {
+            for (Product product : supplier.getProductCatalog().getProductList()) {
+
+                String name = product.toString();
+                jComboBox1.addItem(name);
+                productMap.put(name, product);
+            }
+        }
+    }
 
 }

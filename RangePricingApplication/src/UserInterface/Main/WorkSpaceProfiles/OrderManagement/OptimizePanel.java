@@ -13,6 +13,7 @@ import java.awt.event.*;
 import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import TheBusiness.Business.ProductPerformanceReport;
 
 /**
  * Task 5: Optimize Panel
@@ -367,6 +368,7 @@ public class OptimizePanel extends JPanel {
     
     private void runOptimizationWithUpdates() {
         optimizer = new ProfitOptimizer(business);
+        business.getProductPerformanceReport().captureBeforeState();
         
         try {
             Thread.sleep(500); // Initial delay
@@ -388,6 +390,7 @@ public class OptimizePanel extends JPanel {
             logArea.append("\n" + "=".repeat(60) + "\n");
             logArea.append("   OPTIMIZATION COMPLETE\n");
             logArea.append("=".repeat(60) + "\n");
+            business.getProductPerformanceReport().captureAfterState();
             
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -529,5 +532,9 @@ public class OptimizePanel extends JPanel {
         
         CardLayout layout = (CardLayout) cardSequencePanel.getLayout();
         layout.previous(cardSequencePanel);
+    }
+    
+    public ProductPerformanceReport getPerformanceReport() {
+        return business.getProductPerformanceReport();
     }
 }
