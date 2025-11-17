@@ -10,8 +10,9 @@ import java.util.HashMap;
  
 /**
  *  * Price Simulation Engine for Task 4
- * Modified to include Margin Rate calculation (per TA feedback)
- * 
+    This class provides functionality to simulate price changes and calculate
+ * their impact on margin rate, revenue, and profit. It serves as the core
+ * engine for the price optimization system. * 
  * @author 123
  */
 public class Simulation {
