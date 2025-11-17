@@ -23,16 +23,17 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
     /**
      * Creates new form ManageSuppliersJPanel
      */
+    Business business;
     JPanel CardSequencePanel;
     Product selectedproduct;
-    Business business;
+    
     HashMap<String, Product> productMap = new HashMap<>();
 
-     public ManageProductPerformanceDetail(Business business, Product product, JPanel jp) {
+     public ManageProductPerformanceDetail(Business business, Product product, JPanel jpl) {
 
         this.business = business;
         this.selectedproduct = product;
-        this.CardSequencePanel = jp;
+        this.CardSequencePanel = jpl;
         initComponents();
         populateProductDropdown();
         displayProductPerformance();
@@ -164,7 +165,7 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
 
     private void lowerPriceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lowerPriceBtnActionPerformed
         // TODO add your handling code here:
-        int oldTarget = selectedproduct.getTargetPrice();
+    int oldTarget = selectedproduct.getTargetPrice();
     int below = selectedproduct.getNumberOfProductSalesBelowTarget();
     int above = selectedproduct.getNumberOfProductSalesAboveTarget();
 
@@ -185,6 +186,7 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
         "Target price lowered from $" + oldTarget + " → $" + newTarget);
 
     refreshTable(); 
+    
     }//GEN-LAST:event_lowerPriceBtnActionPerformed
 
     private void increasePriceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_increasePriceBtnActionPerformed
@@ -203,7 +205,7 @@ public class ManageProductPerformanceDetail extends javax.swing.JPanel {
     selectedproduct.updateProduct(
         selectedproduct.getFloorPrice(),
         selectedproduct.getCeilingPrice(),
-        newTarget
+        newTarget //load new target
     );
 
     javax.swing.JOptionPane.showMessageDialog(this, 
