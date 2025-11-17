@@ -2,8 +2,17 @@
  * FinalReportPanel - UI component for displaying product performance reports
  * Task 6: Generate Final Product Performance Report
  * 
- * @author [Your Name]
- * @date 2025-11-15
+ * Features:
+ * - Before/After product performance comparison
+ * - Executive summary with key metrics
+ * - Filtering capabilities (all, changed, revenue increase/decrease)
+ * - Export functionality to text file
+ * - Color-coded visualization of changes
+ * - Detailed product-level analysis
+ * 
+ * @author Marketing Team
+ * @date 2025-11-16
+ * @version 2.0
  */
 package UserInterface.Main.WorkSpaceProfiles.OrderManagement;
 
@@ -24,9 +33,11 @@ import java.util.Locale;
 
 /**
  * Panel to display final product performance report with before/after comparison
+ * This panel integrates with the pricing simulation and optimization workflows
  */
 public class FinalReportPanel extends JPanel {
     
+    // Core business components
     private Business business;
     private ProductPerformanceReport report;
     private JPanel cardSequencePanel;
@@ -38,10 +49,18 @@ public class FinalReportPanel extends JPanel {
     private JButton backButton;
     private JButton exportButton;
     private JButton refreshButton;
+    private JButton clearButton;
     private JComboBox<String> filterComboBox;
+    private JLabel statusLabel;
     
+    // Formatting
     private static final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
     
+    /**
+     * Constructor
+     * @param business The business object containing all data
+     * @param cardPanel The parent panel for navigation
+     */
     public FinalReportPanel(Business business, JPanel cardPanel) {
         super();
         this.business = business;
@@ -49,14 +68,16 @@ public class FinalReportPanel extends JPanel {
         this.report = business.getProductPerformanceReport();
         
         initComponents();
+        updateStatusLabel();
     }
     
     /**
      * Initialize all UI components
      */
     private void initComponents() {
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(0, 5));
         setBackground(new Color(0, 153, 153));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
         // Title Panel
         JPanel titlePanel = createTitlePanel();
@@ -71,11 +92,16 @@ public class FinalReportPanel extends JPanel {
         add(controlPanel, BorderLayout.SOUTH);
     }
     
+    /**
+     * Create the title panel with header information
+     */
     private JPanel createTitlePanel() {
         JPanel panel = new JPanel();
         panel.setBackground(new Color(0, 153, 153));
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 10, 15, 10));
         
+        // Main title
         JLabel titleLabel = new JLabel("FINAL PRODUCT PERFORMANCE REPORT");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setForeground(Color.WHITE);
@@ -84,29 +110,49 @@ public class FinalReportPanel extends JPanel {
         
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
         
+        // Subtitle
         JLabel subtitleLabel = new JLabel("Task 6: Comprehensive Before/After Analysis");
         subtitleLabel.setFont(new Font("Arial", Font.ITALIC, 14));
         subtitleLabel.setForeground(Color.WHITE);
         subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(subtitleLabel);
         
-        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        panel.add(Box.createRigidArea(new Dimension(0, 8)));
+        
+        // Status label
+        statusLabel = new JLabel("Ready");
+        statusLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        statusLabel.setForeground(new Color(200, 255, 200));
+        statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(statusLabel);
         
         return panel;
     }
     
+    /**
+     * Create the main panel containing summary and table
+     */
     private JPanel createMainPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new BorderLayout(0, 5));
         panel.setBackground(Color.WHITE);
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
         // Summary at top
         summaryTextArea = new JTextArea(8, 50);
         summaryTextArea.setEditable(false);
         summaryTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         summaryTextArea.setBackground(new Color(240, 248, 255));
+        summaryTextArea.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         
         JScrollPane summaryScrollPane = new JScrollPane(summaryTextArea);
-        summaryScrollPane.setBorder(BorderFactory.createTitledBorder("Executive Summary"));
+        summaryScrollPane.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(new Color(70, 130, 180), 2),
+            "Executive Summary",
+            javax.swing.border.TitledBorder.LEFT,
+            javax.swing.border.TitledBorder.TOP,
+            new Font("Arial", Font.BOLD, 13),
+            new Color(70, 130, 180)
+        ));
         panel.add(summaryScrollPane, BorderLayout.NORTH);
         
         // Table in center
@@ -116,12 +162,19 @@ public class FinalReportPanel extends JPanel {
         return panel;
     }
     
+    /**
+     * Create the table panel with filtering controls
+     */
     private JPanel createTablePanel() {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new BorderLayout(0, 5));
+        panel.setBackground(Color.WHITE);
         
         // Filter controls
-        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         filterPanel.setBackground(Color.WHITE);
+        
+        JLabel filterLabel = new JLabel("Filter:");
+        filterLabel.setFont(new Font("Arial", Font.BOLD, 12));
         
         filterComboBox = new JComboBox<>(new String[]{
             "Show All Products",
@@ -129,6 +182,7 @@ public class FinalReportPanel extends JPanel {
             "Show Revenue Increase",
             "Show Revenue Decrease"
         });
+        filterComboBox.setPreferredSize(new Dimension(200, 25));
         filterComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -136,7 +190,7 @@ public class FinalReportPanel extends JPanel {
             }
         });
         
-        filterPanel.add(new JLabel("Filter:"));
+        filterPanel.add(filterLabel);
         filterPanel.add(filterComboBox);
         
         panel.add(filterPanel, BorderLayout.NORTH);
@@ -168,16 +222,21 @@ public class FinalReportPanel extends JPanel {
         styleTable();
         
         JScrollPane scrollPane = new JScrollPane(reportTable);
+        scrollPane.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
         panel.add(scrollPane, BorderLayout.CENTER);
         
         return panel;
     }
     
+    /**
+     * Apply styling to the report table
+     */
     private void styleTable() {
         reportTable.setFont(new Font("Arial", Font.PLAIN, 11));
         reportTable.setRowHeight(25);
         reportTable.setGridColor(Color.LIGHT_GRAY);
         reportTable.setShowGrid(true);
+        reportTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         
         // Header styling
         JTableHeader header = reportTable.getTableHeader();
@@ -185,6 +244,7 @@ public class FinalReportPanel extends JPanel {
         header.setBackground(new Color(70, 130, 180));
         header.setForeground(Color.WHITE);
         header.setPreferredSize(new Dimension(header.getPreferredSize().width, 40));
+        header.setReorderingAllowed(false);
         
         // Column widths
         reportTable.getColumnModel().getColumn(0).setPreferredWidth(120);  // Supplier
@@ -195,6 +255,10 @@ public class FinalReportPanel extends JPanel {
         reportTable.getColumnModel().getColumn(5).setPreferredWidth(100);  // Target Before
         reportTable.getColumnModel().getColumn(6).setPreferredWidth(100);  // Target After
         reportTable.getColumnModel().getColumn(7).setPreferredWidth(80);   // Target Δ%
+        reportTable.getColumnModel().getColumn(8).setPreferredWidth(90);   // Sales Above (B)
+        reportTable.getColumnModel().getColumn(9).setPreferredWidth(90);   // Sales Below (B)
+        reportTable.getColumnModel().getColumn(10).setPreferredWidth(90);  // Sales Above (A)
+        reportTable.getColumnModel().getColumn(11).setPreferredWidth(90);  // Sales Below (A)
         
         // Custom renderer for alternating rows and colored percentages
         reportTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
@@ -217,8 +281,10 @@ public class FinalReportPanel extends JPanel {
                         String strValue = (String) value;
                         if (strValue.startsWith("+")) {
                             c.setForeground(new Color(0, 128, 0)); // Green for positive
+                            c.setFont(c.getFont().deriveFont(Font.BOLD));
                         } else if (strValue.startsWith("-")) {
                             c.setForeground(new Color(200, 0, 0)); // Red for negative
+                            c.setFont(c.getFont().deriveFont(Font.BOLD));
                         }
                     }
                 }
@@ -235,16 +301,20 @@ public class FinalReportPanel extends JPanel {
         });
     }
     
+    /**
+     * Create the control panel with action buttons
+     */
     private JPanel createControlPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         panel.setBackground(new Color(0, 153, 153));
         
-        // Refresh button
+        // Load/Refresh button
         refreshButton = new JButton("Load Report Data");
         refreshButton.setPreferredSize(new Dimension(150, 35));
-        refreshButton.setBackground(new Color(102, 153, 255));
+        refreshButton.setBackground(new Color(34, 139, 34));
         refreshButton.setForeground(Color.WHITE);
         refreshButton.setFont(new Font("Arial", Font.BOLD, 12));
+        refreshButton.setFocusPainted(false);
         refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -258,10 +328,25 @@ public class FinalReportPanel extends JPanel {
         exportButton.setBackground(new Color(102, 153, 255));
         exportButton.setForeground(Color.WHITE);
         exportButton.setFont(new Font("Arial", Font.BOLD, 12));
+        exportButton.setFocusPainted(false);
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 exportReport();
+            }
+        });
+        
+        // Clear button
+        clearButton = new JButton("Clear Report");
+        clearButton.setPreferredSize(new Dimension(120, 35));
+        clearButton.setBackground(new Color(220, 100, 50));
+        clearButton.setForeground(Color.WHITE);
+        clearButton.setFont(new Font("Arial", Font.BOLD, 12));
+        clearButton.setFocusPainted(false);
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearReport();
             }
         });
         
@@ -271,89 +356,151 @@ public class FinalReportPanel extends JPanel {
         backButton.setBackground(new Color(150, 150, 150));
         backButton.setForeground(Color.WHITE);
         backButton.setFont(new Font("Arial", Font.BOLD, 12));
-        backButton.addActionListener(e -> {
-            cardSequencePanel.remove(this);
-            CardLayout layout = (CardLayout) cardSequencePanel.getLayout();
-            layout.show(cardSequencePanel, "Marketing");
-            cardSequencePanel.revalidate();
-            cardSequencePanel.repaint();
-        });
+        backButton.setFocusPainted(false);
+        backButton.addActionListener(e -> handleBack());
         
         panel.add(refreshButton);
         panel.add(exportButton);
+        panel.add(clearButton);
         panel.add(backButton);
         
         return panel;
     }
     
     /**
-     * Load report data - checks if before/after states exist
+     * Handle back button click - navigates to previous panel
+     */
+    private void handleBack() {
+        try {
+            CardLayout layout = (CardLayout) cardSequencePanel.getLayout();
+            layout.previous(cardSequencePanel);
+            cardSequencePanel.revalidate();
+            cardSequencePanel.repaint();
+        } catch (Exception e) {
+            System.err.println("Error in handleBack: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Load report data from the shared ProductPerformanceReport
+     * Validates data availability before loading
      */
     public void loadReportData() {
+        // Validate that data exists
         if (!report.hasBeforeState() || !report.hasAfterState()) {
-            JOptionPane.showMessageDialog(this,
-                "No report data available.\n\n" +
-                "To generate a report:\n" +
-                "1. Go to 'Manage Prices'\n" +
-                "2. Run 'Task 4: Run Price Simulation' or 'Task 5: Optimize Profit Margins'\n" +
-                "3. The report will be automatically generated after simulation/optimization",
-                "No Data Available",
-                JOptionPane.INFORMATION_MESSAGE);
+            showNoDataDialog();
+            updateStatusLabel();
             return;
         }
         
-        // Clear existing data
-        tableModel.setRowCount(0);
-        
-        // Load summary
-        ReportSummary summary = report.getSummary();
-        summaryTextArea.setText(generateSummaryText(summary));
-        
-        // Load product data based on current filter
-        applyFilter();
-        
+        try {
+            // Clear existing data
+            tableModel.setRowCount(0);
+            
+            // Load summary
+            ReportSummary summary = report.getSummary();
+            summaryTextArea.setText(generateSummaryText(summary));
+            
+            // Load product data based on current filter
+            applyFilter();
+            
+            // Update status
+            updateStatusLabel();
+            
+            // Show success message
+            JOptionPane.showMessageDialog(this,
+                "Report loaded successfully!\n\n" +
+                "Total products: " + summary.totalProducts + "\n" +
+                "Products changed: " + summary.productsChanged + "\n" +
+                "Revenue change: " + currencyFormat.format(summary.getTotalRevenueChange()),
+                "Report Loaded",
+                JOptionPane.INFORMATION_MESSAGE);
+                
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Error loading report:\n" + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Display dialog when no data is available
+     */
+    private void showNoDataDialog() {
         JOptionPane.showMessageDialog(this,
-            "Report loaded successfully!\n" +
-            "Total products: " + summary.totalProducts + "\n" +
-            "Products changed: " + summary.productsChanged,
-            "Success",
+            "No report data available.\n\n" +
+            "To generate a report:\n" +
+            "1. Go to 'Manage Prices'\n" +
+            "2. Select 'Task 4: Run Price Simulation' OR 'Task 5: Optimize Profit Margins'\n" +
+            "3. Enter new target prices and run the simulation\n" +
+            "4. Return here to view the generated report\n\n" +
+            "The report will show before/after comparison of:\n" +
+            "• Product revenues\n" +
+            "• Target prices\n" +
+            "• Sales performance\n" +
+            "• Overall profit impact",
+            "No Data Available",
             JOptionPane.INFORMATION_MESSAGE);
     }
     
+    /**
+     * Generate formatted summary text
+     */
     private String generateSummaryText(ReportSummary summary) {
         StringBuilder sb = new StringBuilder();
         sb.append("═══════════════════════════════════════════════════════════════════\n");
         sb.append("                   EXECUTIVE SUMMARY\n");
-        sb.append("═══════════════════════════════════════════════════════════════════\n");
+        sb.append("═══════════════════════════════════════════════════════════════════\n\n");
+        
         sb.append(String.format("Total Products Analyzed:      %,d\n", summary.totalProducts));
-        sb.append(String.format("Products with Price Changes:  %,d  (↑ %d  ↓ %d)\n\n", 
+        sb.append(String.format("Products with Price Changes:  %,d  (↑ %d  ↓ %d)\n", 
             summary.productsChanged, 
             summary.productsIncreased, 
             summary.productsDecreased));
+        sb.append("\n───────────────────────────────────────────────────────────────────\n");
+        sb.append("REVENUE ANALYSIS\n");
+        sb.append("───────────────────────────────────────────────────────────────────\n");
         sb.append(String.format("Total Revenue Before:         %s\n", 
             currencyFormat.format(summary.totalRevenueBefore)));
         sb.append(String.format("Total Revenue After:          %s\n", 
             currencyFormat.format(summary.totalRevenueAfter)));
-        sb.append(String.format("Revenue Change:               %s  (%+.2f%%)\n\n", 
+        sb.append(String.format("Revenue Change:               %s  (%s%.2f%%)\n", 
             currencyFormat.format(summary.getTotalRevenueChange()),
+            summary.getTotalRevenueChange() >= 0 ? "+" : "",
             summary.getTotalRevenueChangePercent()));
+        
+        sb.append("\n───────────────────────────────────────────────────────────────────\n");
+        sb.append("PROFIT ANALYSIS\n");
+        sb.append("───────────────────────────────────────────────────────────────────\n");
         sb.append(String.format("Total Profit Before:          %s\n", 
             currencyFormat.format(summary.totalProfitBefore)));
         sb.append(String.format("Total Profit After:           %s\n", 
             currencyFormat.format(summary.totalProfitAfter)));
-        sb.append(String.format("Profit Change:                %s  (%+.2f%%)\n", 
+        sb.append(String.format("Profit Change:                %s  (%s%.2f%%)\n", 
             currencyFormat.format(summary.getTotalProfitChange()),
+            summary.getTotalProfitChange() >= 0 ? "+" : "",
             summary.getTotalProfitChangePercent()));
         
         return sb.toString();
     }
     
+    /**
+     * Apply the selected filter to the table data
+     */
     private void applyFilter() {
+        if (!report.hasBeforeState() || !report.hasAfterState()) {
+            return;
+        }
+        
         tableModel.setRowCount(0);
         
         int filterIndex = filterComboBox.getSelectedIndex();
         List<ProductComparisonData> dataList = report.getAllProductData();
         
+        int displayedCount = 0;
         for (ProductComparisonData data : dataList) {
             boolean include = false;
             
@@ -374,10 +521,17 @@ public class FinalReportPanel extends JPanel {
             
             if (include) {
                 addProductRow(data);
+                displayedCount++;
             }
         }
+        
+        // Update status with filter info
+        updateStatusLabel();
     }
     
+    /**
+     * Add a product row to the table
+     */
     private void addProductRow(ProductComparisonData data) {
         Object[] rowData = new Object[12];
         
@@ -397,6 +551,9 @@ public class FinalReportPanel extends JPanel {
         tableModel.addRow(rowData);
     }
     
+    /**
+     * Format percentage with proper sign
+     */
     private String formatPercent(double percent) {
         if (percent > 0) {
             return String.format("+%.2f%%", percent);
@@ -407,6 +564,9 @@ public class FinalReportPanel extends JPanel {
         }
     }
     
+    /**
+     * Export report to text file
+     */
     private void exportReport() {
         if (!report.hasBeforeState() || !report.hasAfterState()) {
             JOptionPane.showMessageDialog(this,
@@ -436,16 +596,55 @@ public class FinalReportPanel extends JPanel {
                     "Error exporting report:\n" + e.getMessage(),
                     "Export Error", 
                     JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
             }
         }
     }
     
     /**
-     * Set the report object (called after simulation/optimization)
+     * Clear the current report data
      */
-    public void setReport(ProductPerformanceReport report) {
-        this.report = report;
+    private void clearReport() {
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Are you sure you want to clear the current report?\n" +
+            "This will remove all displayed data from the view.",
+            "Confirm Clear",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            tableModel.setRowCount(0);
+            summaryTextArea.setText("Report cleared. Click 'Load Report Data' to reload.");
+            updateStatusLabel();
+            JOptionPane.showMessageDialog(this,
+                "Report cleared successfully.",
+                "Cleared",
+                JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    
+    /**
+     * Update the status label with current report state
+     */
+    private void updateStatusLabel() {
+        if (!report.hasBeforeState() || !report.hasAfterState()) {
+            statusLabel.setText("Status: No data available - Please run a simulation first");
+            statusLabel.setForeground(new Color(255, 200, 150));
+        } else {
+            int rowCount = tableModel.getRowCount();
+            String filterName = (String) filterComboBox.getSelectedItem();
+            statusLabel.setText(String.format("Status: Showing %d products | Filter: %s", 
+                rowCount, filterName));
+            statusLabel.setForeground(new Color(200, 255, 200));
+        }
+    }
+    
+    /**
+     * Set the report object (called after simulation/optimization)
+     * @param newReport The new report to display
+     */
+    public void setReport(ProductPerformanceReport newReport) {
+        this.report = newReport;
         loadReportData();
     }
-
 }
